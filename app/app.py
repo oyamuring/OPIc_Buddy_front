@@ -1,3 +1,4 @@
+# 분리 이전 버전
 from pathlib import Path
 
 import streamlit as st #모듈 불러오기
