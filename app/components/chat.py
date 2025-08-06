@@ -2,7 +2,7 @@
 채팅 화면 컴포넌트
 """
 import streamlit as st
-from utils.speech_utils import display_speech_interface
+from utils.speech_utils import display_speech_interface, display_tts_button
 from utils.model_loader import generate_response
 from components.survey import get_user_profile
 
@@ -83,3 +83,6 @@ def _render_chat_history():
     for msg in st.session_state.chat_history:
         with st.chat_message("user" if msg["role"] == "user" else "assistant"):
             st.markdown(msg["content"])
+            # AI 응답에만 TTS 버튼 추가
+            if msg["role"] == "bot":
+                display_tts_button(msg["content"])
