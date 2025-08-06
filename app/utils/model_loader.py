@@ -66,15 +66,28 @@ def _generate_local_response(model_interface: dict, prompt: str, max_tokens: int
     """로컬 모델로 응답 생성"""
     try:
         pipeline_model = model_interface["pipeline"]
-        response = pipeline_model(prompt, max_new_tokens=max_tokens, do_sample=True, temperature=0.7)
-        answer = response[0]["generated_text"].replace(prompt, "").strip()
         
-        if not answer:
-            answer = "🤖 죄송해요, 답변을 생성하지 못했어요. 질문을 더 구체적으로 해주세요!"
+        # 더 간단한 프롬프트로 변경
+        simple_prompt = f"Question: {prompt.split('User Question:')[-1].replace('Response:', '').strip()}\nAnswer:"
+        
+        response = pipeline_model(
+            simple_prompt, 
+            max_new_tokens=max_tokens, 
+            do_sample=True, 
+            temperature=0.7,
+            repetition_penalty=1.2,  # 반복 방지
+            num_beams=2
+        )
+        
+        answer = response[0]["generated_text"].replace(simple_prompt, "").strip()
+        
+        # 너무 짧거나 반복되는 답변 필터링
+        if not answer or len(answer) < 10 or answer.count(answer.split()[0] if answer.split() else "") > 3:
+            return "Hello! I'm here to help you practice English for OPIc. Could you please ask me something specific about English conversation or OPIc preparation?"
         
         return answer
     except Exception as e:
-        return f"❌ 로컬 모델 응답 생성 오류: {e}"
+        return f"I'm sorry, I had a technical issue. Could you please try asking your question again? (Error: {str(e)[:50]})"
 
 def _generate_api_response(model_interface: dict, prompt: str, max_tokens: int) -> str:
     """API로 응답 생성 (향후 구현 예정)"""

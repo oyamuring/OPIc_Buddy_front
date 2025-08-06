@@ -9,13 +9,15 @@ import os
 from gtts import gTTS
 import io
 
-def display_tts_button(text):
+def display_tts_button(text, message_index=0):
     """텍스트를 음성으로 변환하는 버튼을 표시합니다."""
     # 우측 정렬을 위한 컬럼 사용
     col1, col2 = st.columns([3, 1])
     
     with col2:
-        if st.button("🔊", key=f"tts_{hash(text)}", 
+        # 메시지 인덱스를 포함한 유니크한 키 생성
+        unique_key = f"tts_{message_index}_{hash(text)}"
+        if st.button("🔊", key=unique_key, 
                      help="음성으로 듣기",
                      use_container_width=True):
             _generate_google_tts(text)

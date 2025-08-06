@@ -20,9 +20,13 @@ def show_chat(gen_pipeline):
     _display_user_profile()
 
     # 음성 입력 인터페이스
-    speech_input = display_speech_interface()
-    if speech_input:
-        _handle_question(speech_input, gen_pipeline)
+    display_speech_interface()
+    
+    # 음성 입력이 있을 경우 처리
+    if "user_input" in st.session_state and st.session_state.user_input:
+        _handle_question(st.session_state.user_input, gen_pipeline)
+        # 처리 후 초기화
+        st.session_state.user_input = ""
 
     # 텍스트 입력창
     user_input = st.chat_input("💬 메시지를 입력하세요 (영어 또는 한국어)")
@@ -73,16 +77,21 @@ Response:"""
         st.code(enhanced_prompt)
     
     # AI 응답 생성
-    answer = generate_response(gen_pipeline, enhanced_prompt)
+    with st.spinner("🤖 AI가 생각 중입니다..."):
+        answer = generate_response(gen_pipeline, enhanced_prompt)
+        
+        # 빈 응답일 경우 기본 응답 제공
+        if not answer or answer.strip() in ["", "❌ 모델이 로드되지 않았습니다."]:
+            answer = f"안녕하세요! 질문해주신 '{question}'에 대해 답변드리겠습니다. OPIc 준비를 도와드릴게요! 더 구체적인 질문이 있으시면 언제든 말씀해주세요."
     
     # AI 응답을 채팅 기록에 추가
     st.session_state.chat_history.append({"role": "bot", "content": answer})
 
 def _render_chat_history():
     """채팅 기록을 렌더링합니다."""
-    for msg in st.session_state.chat_history:
+    for idx, msg in enumerate(st.session_state.chat_history):
         with st.chat_message("user" if msg["role"] == "user" else "assistant"):
             st.markdown(msg["content"])
             # AI 응답에만 TTS 버튼 추가
             if msg["role"] == "bot":
-                display_tts_button(msg["content"])
+                display_tts_button(msg["content"], message_index=idx)
