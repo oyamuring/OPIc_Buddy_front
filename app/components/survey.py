@@ -21,7 +21,8 @@ SURVEY_STEPS = [
         "개인주택이나 아파트에 홀로 거주", "친구나 룸메이트와 함께 주택이나 아파트에 거주", 
         "가족(배우자/자녀/기타 가족 일원)과 함께 주택이나 아파트에 거주", "학교 기숙사", "군대 막사"
     ]},
-    {"label": "Background Survey", "desc": "여가활동 및 취미 조사", "options": []}
+    {"label": "Background Survey", "desc": "여가활동 및 취미 조사", "options": []},
+    {"label": "Self Assessment", "desc": "본 Self Assessment에 대한 응답을 기초로 개인별 문항이 출제됩니다. 설명을 잘 읽고 본인의 English 말하기 능력과 비슷한 수준을 선택하시기 바랍니다.", "options": []}
 ]
 
 # 영어 매핑
@@ -36,7 +37,64 @@ SURVEY_STEPS_EN = [
         "living alone in a house/apartment", "living with friends in a house/apartment", 
         "living with family in a house/apartment", "dormitory", "military barracks"
     ]},
-    {"label": "Background Survey", "desc": "Leisure Activities and Hobbies Survey", "options": []}
+    {"label": "Background Survey", "desc": "Leisure Activities and Hobbies Survey", "options": []},
+    {"label": "Self Assessment", "desc": "Based on your responses to this Self Assessment, personalized questions will be generated. Please read the descriptions carefully and select the level that most closely matches your English speaking ability.", "options": []}
+]
+
+# Self Assessment 레벨 정보
+SELF_ASSESSMENT_LEVELS = [
+    {
+        "level": 1,
+        "desc": "나는 10단어 이하의 단어로 말할 수 있습니다."
+    },
+    {
+        "level": 2, 
+        "desc": "나는 기본적인 물건, 색깔, 요일, 음식, 의류, 숫자 등을 말할 수 있습니다. 나는 항상 완벽한 문장을 구사하지는 못하고 간단한 질문도 하기 어렵습니다."
+    },
+    {
+        "level": 3,
+        "desc": "나는 나 자신, 직장, 친숙한 사람과 장소, 일상에 대한 기본적인 정보를 간단한 문장으로 전달할 수 있습니다. 간단한 질문을 할 수 있습니다."
+    },
+    {
+        "level": 4,
+        "desc": "나는 나 자신, 일상, 일/학교, 취미에 대해 간단한 대화를 할 수 있습니다. 나는 이런 친숙한 주제와 일상에 대해 일련의 간단한 문장들을 쉽게 만들어 낼 수 있습니다. 내가 필요한 것을 얻기 위한 질문도 할 수 있습니다."
+    },
+    {
+        "level": 5,
+        "desc": "나는 친숙한 주제와 가정, 일/학교, 개인 및 사회적 관심사에 대해 대화할 수 있습니다. 나는 일이나 업무 일이나고 있는 일, 일어난 일에 대해 문장을 연결하여 말할 수 있습니다. 필요한 경우 설명도 할 수 있습니다. 일상 생활에서 예기치 못한 상황이 발생하더라도 대처할 수 있습니다."
+    },
+    {
+        "level": 6,
+        "desc": "나는 일/학교, 개인적인 관심사, 시사 문제에 대한 어떤 대화나 토론에도 자신 있게 참여할 수 있습니다. 나는 대부분의 주제에 관해 높은 수준의 정확성과 풍부한 어휘로 상세히 설명할 수 있습니다."
+    }
+]
+
+# Self Assessment 영어 매핑
+SELF_ASSESSMENT_LEVELS_EN = [
+    {
+        "level": 1,
+        "desc": "I can speak using 10 words or less."
+    },
+    {
+        "level": 2,
+        "desc": "I can talk about basic objects, colors, days of the week, food, clothing, numbers, etc. I don't always form perfect sentences and have difficulty asking simple questions."
+    },
+    {
+        "level": 3, 
+        "desc": "I can communicate basic information about myself, work, familiar people and places, and daily life in simple sentences. I can ask simple questions."
+    },
+    {
+        "level": 4,
+        "desc": "I can have simple conversations about myself, daily life, work/school, and hobbies. I can easily create a series of simple sentences about these familiar topics and daily life. I can also ask questions to get what I need."
+    },
+    {
+        "level": 5,
+        "desc": "I can converse about familiar topics and home, work/school, and personal and social interests. I can connect sentences to talk about work or what's happening, what happened. I can provide explanations when necessary. I can handle unexpected situations in daily life."
+    },
+    {
+        "level": 6,
+        "desc": "I can confidently participate in any conversation or discussion about work/school, personal interests, and current affairs. I can describe most topics in detail with high accuracy and rich vocabulary."
+    }
 ]
 
 # 4단계 다중 선택 옵션들
@@ -119,7 +177,15 @@ KO_EN_MAPPING = {
     "학위 과정 수업": "degree program courses",
     "전문 기술 향상을 위한 평생 학습": "lifelong learning for professional skills",
     "어학수업": "language courses",
-    "수강 후 5년 이상 지남": "more than 5 years since last course"
+    "수강 후 5년 이상 지남": "more than 5 years since last course",
+    
+    # Self Assessment 레벨 (레벨 숫자로 저장)
+    "레벨 1": "level_1", 
+    "레벨 2": "level_2",
+    "레벨 3": "level_3", 
+    "레벨 4": "level_4",
+    "레벨 5": "level_5",
+    "레벨 6": "level_6"
 }
 
 # 활동별 매핑 (리스트 순서가 같으므로 zip으로 매핑)
@@ -157,6 +223,8 @@ def show_survey():
     # 설문 질문 처리
     if step == 3:  # 4단계 (다중 선택)
         handle_multiple_choice_step(step, total_steps)
+    elif step == 4:  # 5단계 (Self Assessment)
+        handle_self_assessment_step(step, total_steps)
     else:  # 1-3단계 (단일 선택)
         handle_single_choice_step(step, total_steps)
 
@@ -444,6 +512,59 @@ def check_multi_select_completion(step, total_selected):
     return leisure_ok and hobby_ok and sport_ok and travel_ok and total_ok
 
 # ========================
+# Self Assessment 처리
+# ========================
+
+def handle_self_assessment_step(step, total_steps):
+    """Self Assessment 단계를 처리합니다."""
+    st.markdown(f"""
+    <div style="background:rgba(244, 98, 31, 0.1); border-radius:8px; padding: 16px; margin-bottom: 20px; border: 1px solid rgba(244, 98, 31, 0.2);">
+        <div style="font-size:1.1rem; font-weight:600; color:#f4621f; margin-bottom: 8px;">
+            🎯 자가 평가를 통한 맞춤형 문제 출제
+        </div>
+        <div style="font-size:1.0rem; font-weight:500; color:#555; line-height: 1.6;">
+            아래 6개 레벨 중에서 본인의 영어 말하기 능력과 가장 비슷한 수준을 선택해주세요.<br>
+            선택하신 레벨에 따라 개인화된 OPIc 문제가 출제됩니다.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 라디오 버튼으로 레벨 선택
+    level_options = []
+    for level_info in SELF_ASSESSMENT_LEVELS:
+        level_options.append(f"레벨 {level_info['level']}")
+    
+    selected_level = st.radio(
+        "본인의 영어 말하기 능력 수준을 선택하세요:",
+        level_options,
+        key=f"self_assessment_{step}",
+        index=None
+    )
+    
+    # 선택된 레벨에 대한 상세 설명 표시
+    if selected_level:
+        level_num = int(selected_level.split()[-1])  # "레벨 1" -> 1
+        level_info = SELF_ASSESSMENT_LEVELS[level_num - 1]
+        
+        st.markdown(f"""
+        <div style="background:#f8f9fa; border-left: 4px solid #f4621f; padding: 16px; margin: 16px 0; border-radius: 0 8px 8px 0;">
+            <div style="font-size:1.1rem; font-weight:600; color:#f4621f; margin-bottom: 8px;">
+                📋 레벨 {level_num} 설명
+            </div>
+            <div style="font-size:1.0rem; color:#333; line-height: 1.6;">
+                {level_info['desc']}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # 진행 가능 여부 확인
+    can_proceed = selected_level is not None
+    answer = selected_level if selected_level else None
+    
+    # 네비게이션 버튼
+    display_navigation_buttons(step, total_steps, can_proceed, answer)
+
+# ========================
 # 답변 저장 및 네비게이션 (설문조사 저장)
 # ========================
 
@@ -458,7 +579,8 @@ def save_survey_answers(step, answer, sub_answers=None):
             "work": {},           
             "education": {},      
             "living": "",         
-            "activities": {}      
+            "activities": {},
+            "self_assessment": ""      
         }
     
     # 각 섹션이 딕셔너리인지 확인하고 초기화
@@ -485,6 +607,9 @@ def save_survey_answers(step, answer, sub_answers=None):
             "sports": [SPORT_MAPPING.get(item, item) for item in st.session_state[f"sport_selections_{step}"]],
             "travel": [TRAVEL_MAPPING.get(item, item) for item in st.session_state[f"travel_selections_{step}"]]
         }
+    
+    elif step == 4:  # Self Assessment
+        st.session_state.survey_data["self_assessment"] = KO_EN_MAPPING.get(answer, answer)
     
     # Survey Value Pool 업데이트
     if hasattr(st.session_state, 'update_survey_value_pool'):
@@ -520,6 +645,10 @@ def get_user_profile():
         if activities.get('sports'):
             activity_summary.append(f"Sports: {', '.join(activities['sports'][:3])}")
         profile.append(" | ".join(activity_summary))
+    
+    # Self Assessment 정보
+    self_assessment = data.get('self_assessment', 'not specified')
+    profile.append(f"English Level: {self_assessment}")
     
     return " / ".join(profile)
 

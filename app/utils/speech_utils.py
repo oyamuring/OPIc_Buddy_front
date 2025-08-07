@@ -12,13 +12,13 @@ import io
 def display_tts_button(text, message_index=0):
     """텍스트를 음성으로 변환하는 버튼을 표시합니다."""
     # 우측 정렬을 위한 컬럼 사용
-    col1, col2 = st.columns([3, 1])
+    col1, col2 = st.columns([2.5, 1.5])
     
     with col2:
         # 메시지 인덱스를 포함한 유니크한 키 생성
         unique_key = f"tts_{message_index}_{hash(text)}"
-        if st.button("🔊", key=unique_key, 
-                     help="음성으로 듣기",
+        if st.button("🔊 음성으로 듣기", key=unique_key, 
+                     help="음성으로 재생하기",
                      use_container_width=True):
             _generate_google_tts(text)
 
@@ -86,12 +86,16 @@ def recognize_speech():
 
 def display_speech_interface():
     """음성 인식 인터페이스를 표시합니다."""
-    if st.button("🎤 음성으로 질문하기", key="speech_input"):
-        with st.spinner("음성 입력을 기다리는 중..."):
-            success, text = recognize_speech()
-            
-        if success:
-            st.success(f"✅ 인식된 질문: {text}")
-            st.session_state.user_input = text
-        else:
-            st.error(text)
+    # 동일한 크기로 버튼 표시
+    col1, col2 = st.columns([2.5, 1.5])
+    
+    with col2:
+        if st.button("🎤 음성으로 질문하기", key="speech_input", use_container_width=True):
+            with st.spinner("음성 입력을 기다리는 중..."):
+                success, text = recognize_speech()
+                
+            if success:
+                st.success(f"✅ 인식된 질문: {text}")
+                st.session_state.user_input = text
+            else:
+                st.error(text)

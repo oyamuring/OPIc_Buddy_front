@@ -67,6 +67,10 @@ def initialize_session_state():
                         if item and item not in value_pool:
                             value_pool.append(item)
         
+        # self_assessment 값 추가
+        if survey_data.get("self_assessment") and survey_data["self_assessment"] not in value_pool:
+            value_pool.append(survey_data["self_assessment"])
+        
         st.session_state.survey_value_pool = value_pool
     
     # 세션 상태에 업데이트 함수 저장
