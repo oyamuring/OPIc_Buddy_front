@@ -20,6 +20,10 @@ def main():
         layout="centered"
     )
     
+    # 개발자 모드 토글 (사이드바에 숨겨진 체크박스)
+    st.sidebar.markdown("---")
+    st.session_state.dev_mode = st.sidebar.checkbox("🛠️ 개발자 모드", value=st.session_state.get("dev_mode", False))
+    
     # 세션 상태 초기화
     initialize_session_state()
     
@@ -50,14 +54,48 @@ def initialize_session_state():
             "living": "",
             "activities": {}
         }
+        
+    # 설문 데이터가 업데이트될 때마다 value pool 갱신
+    def update_survey_value_pool():
+        """설문 데이터에서 값들을 추출해 survey_value_pool에 저장"""
+        survey_data = st.session_state.get("survey_data", {})
+        value_pool = []
+
+        # work, education, living에서 값 추출
+        if isinstance(survey_data.get("work"), dict):
+            value_pool.extend([v for v in survey_data["work"].values() if v])
+        if isinstance(survey_data.get("education"), dict):
+            value_pool.extend([v for v in survey_data["education"].values() if v])
+        if survey_data.get("living"):
+            value_pool.append(survey_data["living"])
+            
+        # activities는 중첩 구조이므로 별도 처리
+        if isinstance(survey_data.get("activities"), dict):
+            for category_items in survey_data["activities"].values():
+                if isinstance(category_items, list):
+                    value_pool.extend(category_items)
+
+        # None, 빈 문자열, 빈 리스트 등은 제외
+        st.session_state.survey_value_pool = [v for v in value_pool if v and v != ""]
+
+    # survey_value_pool 초기화 및 업데이트
+    if "survey_value_pool" not in st.session_state:
+        st.session_state.survey_value_pool = []
     
+    # 설문 데이터가 있으면 value pool 업데이트
+    update_survey_value_pool()
+
+    # 개발자 모드에서만 출력
+    if st.session_state.get("dev_mode", False):
+        st.sidebar.subheader("🛠️ Survey Value Pool (Dev)")
+        st.sidebar.write(st.session_state.survey_value_pool)
     # 채팅 기록 저장소
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
     
     # 설문 진행 단계
     if "survey_step" not in st.session_state:
-        st.session_state.survey_step = 0
+        st.session_state.survey_step = 1
 
 if __name__ == "__main__":
     main()
