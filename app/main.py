@@ -89,6 +89,7 @@ def initialize_session_state():
     if st.session_state.get("dev_mode", False):
         st.sidebar.subheader("🛠️ Survey Value Pool (Dev)")
         st.sidebar.write(st.session_state.survey_value_pool)
+    
     # 채팅 기록 저장소
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
