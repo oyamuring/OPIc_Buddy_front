@@ -1,0 +1,388 @@
+{
+  "survey": {
+    "living alone in a house/apartment": [
+      "What is the biggest challenge of living alone?",
+      "Tell me about the best part of having your own place.",
+      "How do you handle household repairs and maintenance on your own?"
+    ],
+    "living with friends in a house/apartment": [
+      "I'd like to know about your best friend. Who is she or he? What does she or he look like? Describe your best friend in as much detail as you can."
+    ],
+    "living with family in a house/apartment": [
+      "Tell me about all the household chores you are in charge of. What are they? How do you carry out your responsibility?"
+    ],
+     "dormitory": [
+      "What's a typical day like in your dorm?",
+       "Describe your roommate. What are some of the pros and cons of living with them?",
+       "What do you like most about living in a dormitory?"
+    ],
+    "military barracks": [
+      "Tell me about the last time you had a day off at the barracks. What did you do?",
+      "What is the most difficult thing about living in the barracks?",
+      "Describe the living conditions in your barracks. What does your room look like?"
+    ],
+    "student": [
+      "You indicated in the survey that you go to school. Tell me about your school.",
+      "Tell me about your favorite professor. What does he or she look like? Why do you like him or her?",
+      "I'd like to know about your typical day at school. What do you do when you go to school? Tell me in detail."
+    ],
+    "museum": [
+      "When was the last time you went to a museum? What did you see there, and what was the most memorable piece or exhibit?",
+      "Tell me about your favorite type of museum. Why do you enjoy visiting this kind of museum, and how do you feel when you are there?",
+      "Describe a memorable experience you had at a museum. What happened, and why was it so special to you?"
+    ],
+    "watching sports": [
+      "What is your favorite sport to watch? Tell me about your favorite team or player, and why you like to watch them play.",
+      "Do you prefer watching sports at home on TV or going to a stadium? What are the pros and cons of each, and what was your last experience like?",
+      "Tell me about the last time you watched a live sporting event. Who were you with, and what was the atmosphere like?"
+    ],
+    "TV": [
+      "What TV shows are you watching these days? Describe the show, and tell me why you find it so interesting.",
+      "Tell me about a TV show you've watched from the very first episode. What was it about, and what made you want to keep watching it?",
+      "What is your favorite TV genre? Why do you enjoy it, and can you give me an example of a show you love in that genre?"
+    ],
+    "watching cooking programs": [
+      "What's your favorite cooking show? Describe the show and tell me what you like about it, and if you have ever tried to cook a recipe from it.",
+      "Have you ever tried to make a dish you saw on a cooking show? Tell me about that experience—what did you make, and how did it turn out?",
+      "Do you think watching cooking programs has made you a better cook? Why or why not, and what is one thing you've learned from a cooking show?"
+    ],
+    "driving": [
+      "Tell me about your first driving experience. Who taught you, and how did you feel when you were behind the wheel for the first time?",
+      "How do you feel about traffic and how do you handle it? What are some things you do to pass the time when you're stuck in a traffic jam?",
+      "Describe a memorable road trip you've taken. Where did you go, who did you go with, and what made the trip so special?"
+    ],
+    "club": [
+      "Tell me about the last time you went to a club. Who did you go with, what did you do, and what was the music like?",
+      "What is your favorite part about going to a club? Do you like the music, the dancing, or just being with friends?",
+      "What kind of music do you like to listen to at a club, and what makes a club a good one for you?"
+    ],
+    "park": [
+      "Tell me about a park you often visit. Where is it located, what does it look like, and what do you usually do there?",
+      "What is the best part of the park you usually go to? Describe the atmosphere and how it makes you feel.",
+      "Describe a memorable experience you had at a park. What happened, and why was it so memorable?"
+    ],
+    "Improving living space": [
+      "What was the last thing you did to improve your living space? Describe the project and tell me how it turned out.",
+      "Tell me about a time you tried to improve your living space but it didn't go as planned. What happened, and what did you learn from the experience?",
+      "If you could make one improvement to your home right now, what would it be? Why would you choose that specific improvement?"
+    ],
+    "texting friends": [
+      "How often do you text your friends and what do you usually talk about? Describe a typical text conversation you have.",
+      "Tell me about the last time you had a funny conversation with a friend through text messages. What did you talk about, and what made it so funny?",
+      "Do you prefer texting or calling your friends, and why? What are the advantages of each method for you?"
+    ],
+    "watching reality shows": [
+      "What is your favorite reality show and what do you like about it? Tell me about the plot or concept of the show.",
+      "Tell me about a reality show you've watched that taught you something new. What did you learn, and how did it change your perspective?",
+      "Why do you think so many people are interested in reality shows? What do you think is the appeal, and what's your opinion on them?"
+    ],
+    "spa/massage shop": [
+      "Tell me about the last time you went to a spa or massage shop. What kind of service did you get, and how did you feel afterwards?",
+      "What do you like most about going to a spa? Is it the relaxation, the treatments, or the overall atmosphere?",
+      "How often do you visit a spa or massage shop, and what benefits do you get from it? Describe your routine and how it affects your health."
+    ],
+    "camping": [
+      "Tell me about the last time you went camping. Where did you go, who did you go with, and what activities did you do?",
+      "What do you like most about camping? Is it being close to nature, cooking outdoors, or something else?",
+      "What are some of the pros and cons of camping? Tell me about the biggest challenge you've faced while camping."
+    ],
+    "performance": [
+      "Tell me about a memorable performance you've seen. What was it, who was performing, and what made it so unforgettable?",
+      "What kind of performances do you like to watch? Do you prefer concerts, plays, or something else, and why?",
+      "Do you prefer to watch live performances or recorded ones? What's the biggest difference for you, and what was your last experience like?"
+    ],
+    "bar/pub": [
+      "Tell me about a memorable experience you had at a bar or pub. Who were you with, and what made it so special?",
+      "What is your favorite kind of drink to have at a bar? Tell me what it is, and why you like it.",
+      "Do you prefer to go to a bar alone or with friends? Why, and what is the atmosphere like when you go?"
+    ],
+    "billiard": [
+      "How often do you play billiards? Who do you usually play with, and what do you like most about the game?",
+      "Describe a memorable game of billiards you've played. What happened, and who did you play against?",
+      "What are some of the challenges of playing billiards? Do you think it's a game of skill, luck, or both?"
+    ],
+    "test preparation": [
+      "How do you typically prepare for a test? Tell me about your study routine, and what methods you find most effective.",
+      "What is the hardest part about preparing for a test for you? Do you struggle with a specific subject, or with motivation?",
+      "Describe a time when you prepared for a test and were proud of your result. What was the test, and how did you feel when you got your score?"
+    ],
+    "news": [
+      "How do you usually get your news? Do you prefer to read, watch, or listen to the news, and why?",
+      "Tell me about the most interesting news you've heard recently. What was it about, and why did it catch your attention?",
+      "What is your opinion on the news and its importance in our daily lives? Do you think it's important to stay up-to-date, and why?"
+    ],
+    "shopping": [
+      "When was the last time you went shopping? What did you buy, and was it an enjoyable experience?",
+      "What is your favorite thing to buy when you go shopping? Describe your shopping style and what you look for when you buy it.",
+      "Tell me about your best and worst shopping experiences. What happened in each situation, and what made them so different?"
+    ],
+    "beach": [
+      "What do you like most about going to the beach? Is it the swimming, the sun, or just relaxing by the water?",
+      "Tell me about the last time you went to the beach. Who did you go with, what did you do, and what was the weather like?",
+      "What are some of the things you always bring with you when you go to the beach? Describe your beach essentials and why they are important."
+    ],
+    "volunteering": [
+      "Tell me about a volunteering experience you've had. What kind of work did you do, and what was the most rewarding part of it?",
+      "What is the most rewarding part of volunteering? How does it make you feel, and why do you think it's important?",
+      "How did you first get interested in volunteering? Was there a specific person or event that inspired you to start?"
+    ],
+    "chess": [
+      "How often do you play chess? Who do you usually play with, and what do you like most about the game?",
+      "Describe a memorable game of chess you've played. What happened, and how did you feel during the game?",
+      "What are some of the challenges of playing chess? Do you think it's a game of pure strategy, and why?"
+    ],
+    "cafe": [
+      "I’d like to know about a cafe you often visit. Where is it and how often do you go there? What does it look like and why do you like this place?"
+    ],
+    "SNS": [
+      "Tell me about the last time you used SNS. What website was it? What did you do on this SNS website? Tell me about this experience as much as you can.",
+      "What is your favorite SNS? What do you use it for? Why do you like it?",
+      "How did SNS change your life? Tell me all the advantages of SNS.",
+      "Tell me about how you first became interested in SNS. Who taught you? How did you feel? Tell me in detail."
+    ],
+    "movies": [
+      "I’d like to know about your favorite and least favorite kinds of movies. What are they? What do you like or dislike about these movies?"
+    ],
+    "game": [
+      "How is the game you played when you were a child different from a game you enjoy now? What are the similarities between the past and present? Please describe the contrast in detail."
+    ],
+    "concert": [
+      "You indicated in the survey that you go to concerts. Which concerts do you go to? Who do you go with?",
+      "Tell me about the concert you've been to recently. How many people were there? What did you do?",
+      "Tell me about a memorable incident that happened at a concert."
+    ],
+    "health": [
+      "You indicated in the survey you work out at the gym. What do you like about the gym? How do you feel after work out?",
+      "Tell me about a healthy person you know. How does he or she stay healthy? How did he or she affect you?",
+      "Let's talk about the process of going to the hospital. Describe in detail from making a reservation to the end of treatment."
+    ],
+    "searching job": [
+      "You indicated in the survey that you are looking for a job. What kind of job are you looking for? How are you preparing for it? Tell me in detail.",
+      "Tell me about the last time you had a job interview. How did it go, and how did you prepare for it?",
+      "What is the hardest part about looking for a job? Do you struggle with writing resumes, networking, or something else?"
+    ],
+    "reading books to children": [
+      "Tell me about a time you read a book to a child. What book was it, and what was the child's reaction?",
+      "What do you think is the most important part of reading to children? Is it the story, the characters, or the interaction?",
+      "How do you choose which books to read to a child? What factors do you consider, and what kind of stories do you think are best for them?"
+    ],
+    "music": [
+      "What's your favorite music genre and why do you like it? Tell me about a song that you think perfectly represents that genre.",
+      "Who is your favorite artist or band? Tell me about their music, and why you feel a connection to them.",
+      "Tell me about the last time you listened to a song that made you feel emotional. What was the song, and what emotion did it bring out in you?"
+    ],
+    "musical instruments": [
+      "Do you play any musical instruments? If so, which one, and how long have you been playing it?",
+      "How did you get interested in playing a musical instrument? Was there a specific person or event that inspired you to start?",
+      "Tell me about a memorable experience you had playing an instrument. Where were you, and who were you playing for?"
+    ],
+    "dancing": [
+      "What kind of dancing do you like to do or watch? How often do you dance, and what's your favorite part about it?",
+      "When was the last time you danced? What was the occasion, and who were you with?",
+      "Describe a memorable dancing experience you've had. What made it so special and how did it make you feel?"
+    ],
+    "writing": [
+      "Do you enjoy writing? What kind of things do you like to write, and what do you find most interesting about the process?",
+      "When was the last time you wrote something? What was it, and who was it for?",
+      "What is the most challenging part of writing for you? Is it coming up with ideas, organizing your thoughts, or something else?"
+    ],
+    "drawing": [
+      "Do you enjoy drawing? What kind of things do you like to draw, and what tools or materials do you use?",
+      "Tell me about the last time you drew something. What was it, and what was your inspiration for it?",
+      "What do you like about drawing? Does it help you relax, express yourself, or something else?"
+    ],
+    "cooking": [
+      "What is your favorite dish to cook? Tell me about the recipe, and why you enjoy making it so much.",
+      "Tell me about a time you cooked something for someone special. Who was it, and what did you make for them?",
+      "What is the most challenging part of cooking for you? Do you find it difficult to follow recipes, or to be creative?"
+    ],
+    "reading": [
+      "What are you currently reading? Tell me about the book, and what do you like about it so far?",
+      "What is your favorite genre of books? Why do you like it, and can you recommend a book in that genre?",
+      "Tell me about a book that changed the way you think about something. What was the book, and how did it affect you?"
+    ],
+    "investing": [
+      "Do you invest? If so, what do you invest in, and how do you feel about the risks involved?",
+      "How did you get interested in investing? Was there a specific event or person that inspired you to start?",
+      "Tell me about a time you made a successful investment. What was it, and how did you feel when it paid off?"
+    ],
+    "travel magazine": [
+      "Do you read travel magazines? Which one is your favorite, and what kind of articles or photos do you enjoy most?",
+      "What is the most interesting place you've read about in a travel magazine? What about it made you want to visit?",
+      "How do travel magazines influence your travel plans? Do they inspire you to go to new places, or help you plan your trips?"
+    ],
+    "singing": [
+      "Do you enjoy singing? What's your favorite song to sing, and why do you like it so much?",
+      "When was the last time you sang? Where were you, who were you with, and what was the occasion?",
+      "Tell me about a memorable experience you had while singing. What happened, and what made it so special?"
+    ],
+    "basketball": [
+      "Do you play basketball? How often do you play, and what do you like most about the game?",
+      "Who is your favorite basketball player and why do you like them? Describe their playing style and what makes them so great.",
+      "Tell me about a memorable basketball game you've watched or played in. What happened, and how did you feel during the game?"
+    ],
+    "baseball/softball": [
+      "Do you play baseball or softball? How often do you play, and what do you like most about the game?",
+      "Who is your favorite baseball team? Tell me about a memorable game you've watched or played in.",
+      "What is the most challenging part of playing baseball or softball? Do you find it difficult to hit the ball, or to field it?"
+    ],
+    "soccer": [
+      "Do you play soccer? How often do you play, and what do you like most about the game?",
+      "Who is your favorite soccer player and why do you like them? Describe their skills and what makes them a great player.",
+      "Tell me about a memorable soccer game you've watched or played in. What was the final score, and how did you feel during the game?"
+    ],
+    "american football": [
+      "Do you watch American football? Who is your favorite team, and what do you like about the sport?",
+      "How did you get interested in American football? Was it a friend, a family member, or something else that got you into it?",
+      "Tell me about a memorable American football game you've watched. What happened in the game, and who was playing?"
+    ],
+    "hockey": [
+      "Do you play or watch hockey? Who is your favorite team or player, and what do you like about the sport?",
+      "What do you like most about hockey? Do you enjoy the fast pace, the skill, or the physicality of the game?",
+      "Tell me about a memorable hockey game you've watched or played in. What was the atmosphere like, and what was the final score?"
+    ],
+    "cricket": [
+      "Do you play or watch cricket? Who is your favorite team or player, and what do you like about the sport?",
+      "What do you like most about cricket? Is it the strategy, the teamwork, or something else?",
+      "Tell me about a memorable cricket game you've watched or played in. What happened, and how did you feel during the game?"
+    ],
+    "golf": [
+      "How often do you play golf? Who do you usually play with, and what do you like most about the game?",
+      "What do you like about playing golf? Is it the challenge of the game, or just being outdoors?",
+      "Tell me about a memorable golf game you've played. What was the course like, and what was your score?"
+    ],
+    "volleyball": [
+      "How often do you play volleyball? Who do you usually play with, and what do you like most about the game?",
+      "What do you like most about playing volleyball? Is it the teamwork, the exercise, or something else?",
+      "Tell me about a memorable volleyball game you've played. What happened, and what was the final score?"
+    ],
+    "tennis": [
+      "How often do you play tennis? Who do you usually play with, and what do you like most about the game?",
+      "What do you like most about playing tennis? Do you enjoy the one-on-one competition, or the exercise?",
+      "Tell me about a memorable tennis game you've played. What was the score, and how did you feel after the game?"
+    ],
+    "badminton": [
+      "How often do you play badminton? Who do you usually play with, and what do you like most about the game?",
+      "What do you like most about playing badminton? Is it the fast pace, or the strategy involved?",
+      "Tell me about a memorable badminton game you've played. What happened, and who did you play against?"
+    ],
+    "table tennis": [
+      "How often do you play table tennis? Who do you usually play with, and what do you like most about the game?",
+      "What do you like most about playing table tennis? Do you enjoy the quick reflexes it requires, or the challenge of the game?",
+      "Tell me about a memorable table tennis game you've played. What was the score, and how did you feel after the game?"
+    ],
+    "swimming": [
+      "How often do you go swimming? Where do you usually go, and what do you like most about it?",
+      "What do you like most about swimming? Do you swim for exercise, or for fun and relaxation?",
+      "Tell me about a memorable swimming experience you've had. What was it, and how did it make you feel?"
+    ],
+    "bicycling": [
+      "How often do you go bicycling? Where do you usually go, and what do you like most about it?",
+      "What do you like most about bicycling? Do you do it for exercise, to explore new places, or for another reason?",
+      "Tell me about a memorable bicycling experience you've had. What happened, and who did you go with?"
+    ],
+    "skiing/snowboarding": [
+      "Do you go skiing or snowboarding? How often do you go, and who do you usually go with?",
+      "What do you like most about skiing or snowboarding? Do you enjoy the speed, the challenge, or the scenery?",
+      "Tell me about a memorable skiing or snowboarding experience you've had. What was the weather like, and what was the resort like?"
+    ],
+    "ice skating": [
+      "How often do you go ice skating? Who do you usually go with, and what do you like most about it?",
+      "What do you like most about ice skating? Is it the feeling of gliding on the ice, or something else?",
+      "Tell me about a memorable ice skating experience you've had. What happened, and how did it make you feel?"
+    ],
+    "jogging": [
+      "How often do you go jogging? Where do you usually go, and what do you like most about it?",
+      "What do you like most about jogging? Do you jog for your physical health, or your mental well-being?",
+      "Tell me about a memorable jogging experience you've had. What was the weather like, and what did you see during your run?"
+    ],
+    "walking": [
+      "How often do you go for a walk? Where do you usually go, and what do you like most about it?",
+      "What do you like most about walking? Do you walk for exercise, to clear your head, or for another reason?",
+      "Tell me about a memorable walking experience you've had. What happened, and who were you with?"
+    ],
+    "yoga": [
+      "How often do you do yoga? Where do you usually do it, and what do you like most about it?",
+      "What do you like most about yoga? Do you find it helps with your physical flexibility, or your mental focus?",
+      "Tell me about a memorable yoga experience you've had. What happened, and how did you feel after the session?"
+    ],
+    "hiking/trekking": [
+      "How often do you go hiking or trekking? Where do you usually go, and what do you like most about it?",
+      "What do you like most about hiking or trekking? Is it the challenge, the views, or just being in nature?",
+      "Tell me about a memorable hiking or trekking experience you've had. What was the trail like, and what did you see along the way?"
+    ],
+    "fishing": [
+      "How often do you go fishing? Where do you usually go, and what do you like most about it?",
+      "What do you like most about fishing? Do you enjoy the peacefulness, or the thrill of catching a fish?",
+      "Tell me about a memorable fishing experience you've had. What did you catch, and who were you with?"
+    ],
+    "taekwondo": [
+      "How often do you practice Taekwondo? What do you like most about it, and what belt or level are you?",
+      "How did you get interested in Taekwondo? Was it a friend, a family member, or something you saw on TV?",
+      "Tell me about a memorable Taekwondo experience you've had. What happened, and how did it make you feel?"
+    ],
+    "taking fitness classes": [
+      "What kind of fitness classes do you take? How often do you take them, and what do you like about the classes?",
+      "What do you like most about taking fitness classes? Is it the instructor, the social aspect, or the workout itself?",
+      "Tell me about a memorable experience you had in a fitness class. What happened, and what was the class like?"
+    ],
+    "do not exercise": [
+      "Tell me about why you don't exercise. Is it because of a lack of time, motivation, or something else?",
+      "How do you feel about not exercising? Do you think you would feel better if you did, or do you feel fine as you are?",
+      "Do you think you might start exercising in the future? Why or why not, and what would make you want to start?"
+    ],
+    "domestic business trip": [
+      "Tell me about your last domestic business trip. Where did you go, what was the purpose of your trip, and what did you do?",
+      "What do you like most about going on business trips? Is it the change of scenery, or meeting new people?",
+      "What is the most challenging part of a business trip? Is it being away from home, or dealing with travel logistics?"
+    ],
+    "overseas business trip": [
+      "Tell me about your last overseas business trip. Where did you go, and what was the purpose of your trip?",
+      "What do you like most about going on overseas business trips? Is it the chance to experience a new culture, or the opportunity to travel?",
+      "What is the most challenging part of an overseas business trip? Is it the language barrier, the jet lag, or something else?"
+    ],
+    "staycation": [
+      "When was the last time you had a staycation? What did you do, and who did you spend it with?",
+      "What do you like most about staycations? Do you enjoy the comfort of your own home, or the chance to explore your local area?",
+      "What is the best part of a staycation? Is it saving money, or not having to deal with the stress of travel?"
+    ],
+    "domestic travel": [
+      "Tell me about the last time you traveled domestically. Where did you go, and what did you do there?",
+      "What is your favorite place to travel to in your country? Why do you like it so much, and what activities do you do there?",
+      "Tell me about a memorable domestic travel experience you've had. What happened, and who were you with?"
+    ],
+    "international travel": [
+      "Tell me about the last time you traveled internationally. Where did you go, what did you do there, and what was the culture like?",
+      "What is your favorite country to travel to? Why do you like it so much, and what's your favorite thing to do there?",
+      "Tell me about a memorable international travel experience you've had. What happened, and what made it so special?"
+    ],
+    "newspaper": [
+      "How often do you read the newspaper? Do you prefer a physical paper or an online version, and what sections do you usually read?",
+      "What do you think is the most important role of a newspaper in society? How has this role changed over time, in your opinion?",
+      "Tell me about a time you read a newspaper article that had a big impact on you. What was the article about, and how did it affect your perspective?"
+    ],
+    "taking photos": [
+      "How often do you take photos? What do you usually take pictures of, and do you use a smartphone or a dedicated camera?",
+      "What do you think is the most important part of taking a good photo? Is it the lighting, the composition, or the subject itself?",
+
+    ]
+  },
+  "role_play": {
+    "Getting Ready for Traveling": [
+      "I’d like to give you a situation and ask you to act it out. Imagine you’re planning a family trip. Call a friend who came back from a trip and ask 3 or 4 questions about the trip you’re planning."
+    ],
+    "Cancelling Appointment": [
+      "There’s a problem you must take care of. You were supposed to meet a friend but suddenly something came up and you can’t make it. Call your friend, explain the alternatives to solve this problem.",
+      "I'm sorry, but there is a problem you need to resolve. You are planning to go shopping with your friend. But you feel sick. Call your friend and explain the situation. Suggest two or three alternatives."
+    ],
+    "Item Purchase": [
+      "I’m going to give you a situation and ask you to act it out. Imagine that you want to buy a new smart phone. Call the store and ask 3 or 4 questions about the smart phone.",
+      "I'd like to give you a situation for you to act out. You want to go shopping with your friend. Ask 3-4 questions to your friend."
+    ]
+  },
+  "random_question": {
+    "technology": [
+      "Nowadays there are all kinds of electronic devices you can buy. What was the latest device that you bought? When did you buy it? Why did you buy it?"
+    ]
+  }
+}
