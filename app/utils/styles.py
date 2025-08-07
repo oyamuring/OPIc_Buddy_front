@@ -38,6 +38,29 @@ def apply_intro_styles():
             text-align: center;
             margin-top: 10px;
         }
+        
+        /* 인트로 페이지 전용 버튼 스타일 */
+        div[data-testid="stButton"] button[key="start_button"] {
+            background: #f4621f !important;
+            color: #fff !important;
+            font-weight: 600 !important;
+            font-size: 0.9rem !important;
+            border-radius: 6px !important;
+            border: none !important;
+            padding: 0.4em 1.5em !important;
+            box-shadow: 0 1px 4px 0 rgba(244,98,31,0.08) !important;
+            transition: background 0.18s !important;
+            height: 36px !important;
+            min-width: 90px !important;
+            max-width: 160px !important;
+            width: auto !important;
+            white-space: nowrap !important;
+        }
+        
+        div[data-testid="stButton"] button[key="start_button"]:hover {
+            background: #d94e0b !important;
+            color: #fff !important;
+        }
     </style>
     """, unsafe_allow_html=True)
 
@@ -106,13 +129,18 @@ def apply_button_styles():
     .stButton>button {
         background: #f4621f;
         color: #fff;
-        font-weight: 700;
-        font-size: 1.13rem;
+        font-weight: 600;
+        font-size: 0.9rem;
         border-radius: 6px;
         border: none;
-        padding: 0.6em 0;
+        padding: 0.4em 1.5em;
         box-shadow: 0 1px 4px 0 rgba(244,98,31,0.08);
         transition: background 0.18s;
+        height: 36px;
+        min-width: 90px;
+        max-width: 160px;
+        width: auto !important;
+        white-space: nowrap;
     }
     .stButton>button:hover {
         background: #d94e0b;

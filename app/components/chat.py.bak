@@ -43,27 +43,10 @@ def _display_user_profile():
     with st.expander("나의 프로필 (설문조사 결과)"):
         st.info(profile)
         
-        # Survey Value Pool 표시 (개발자용)
-        with st.expander("🛠️ Survey Value Pool (Dev)"):
-            survey_value_pool = st.session_state.get("survey_value_pool", [])
-            if survey_value_pool:
-                pool_text = "[\n"
-                for i, value in enumerate(survey_value_pool):
-                    pool_text += f'  {i}: "{value}"\n'
-                pool_text += "]"
-                st.code(pool_text)
-            else:
-                st.code("[]")
-        
         # 상세 데이터도 보여주기 (개발자용)
         if hasattr(st.session_state, 'survey_data'):
-            with st.expander("🔍 상세 데이터 (개발자용)", expanded=False):
-                survey_data = st.session_state.survey_data
-                if survey_data:
-                    import json
-                    st.code(json.dumps(survey_data, indent=2, ensure_ascii=False), language="json")
-                else:
-                    st.info("설문조사 데이터가 없습니다.")
+            with st.expander("상세 데이터 (개발자용)"):
+                st.json(st.session_state.survey_data)
 
 def _handle_question(question, gen_pipeline):
     """

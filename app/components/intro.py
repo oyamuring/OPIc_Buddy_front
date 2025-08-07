@@ -58,9 +58,37 @@ def _display_ava_image():
 
 def _display_start_button():
     """시작 버튼을 표시합니다."""
+    # 인트로 전용 버튼 스타일
+    st.markdown("""
+    <style>
+        .intro-button-container .stButton > button {
+            background: #f4621f !important;
+            color: #fff !important;
+            font-weight: 600 !important;
+            font-size: 0.9rem !important;
+            border-radius: 6px !important;
+            border: none !important;
+            padding: 0.35em 0.8em !important;
+            box-shadow: 0 1px 4px 0 rgba(244,98,31,0.08) !important;
+            transition: background 0.18s !important;
+            height: 34px !important;
+            min-width: 60px !important;
+            max-width: 90px !important;
+            width: auto !important;
+            white-space: nowrap !important;
+        }
+        .intro-button-container .stButton > button:hover {
+            background: #d94e0b !important;
+            color: #fff !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+    
     col1, col2, col3 = st.columns([4, 1.5, 4])
     
     with col2:
+        st.markdown('<div class="intro-button-container">', unsafe_allow_html=True)
         if st.button("next", key="start_button", help="opic 모의고사 시작", use_container_width=True):
             st.session_state.stage = "survey"
             st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
