@@ -11,10 +11,10 @@
     "living with family in a house/apartment": [
       "Tell me about all the household chores you are in charge of. What are they? How do you carry out your responsibility?"
     ],
-     "dormitory": [
+    "dormitory": [
       "What's a typical day like in your dorm?",
-       "Describe your roommate. What are some of the pros and cons of living with them?",
-       "What do you like most about living in a dormitory?"
+      "Describe your roommate. What are some of the pros and cons of living with them?",
+      "What do you like most about living in a dormitory?"
     ],
     "military barracks": [
       "Tell me about the last time you had a day off at the barracks. What did you do?",
@@ -363,10 +363,9 @@
     ],
     "taking photos": [
       "How often do you take photos? What do you usually take pictures of, and do you use a smartphone or a dedicated camera?",
-      "What do you think is the most important part of taking a good photo? Is it the lighting, the composition, or the subject itself?",
-
+      "What do you think is the most important part of taking a good photo? Is it the lighting, the composition, or the subject itself?"
     ]
-  },
+},
   "role_play": {
     "Getting Ready for Traveling": [
       "I’d like to give you a situation and ask you to act it out. Imagine you’re planning a family trip. Call a friend who came back from a trip and ask 3 or 4 questions about the trip you’re planning."

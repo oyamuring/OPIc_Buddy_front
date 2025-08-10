@@ -4,9 +4,6 @@ transformers
 tokenizers
 scikit-learn
 
-# pdf대본처리
-fitz
-
 # 몽고db atlas 연동
 pymongo
 dnspython
