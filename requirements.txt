@@ -1,5 +1,21 @@
-streamlit>=1.28.0
-transformers>=4.35.0
-torch>=2.0.0
-numpy>=1.24.0
-pathlib
+# 웹 인터페이스
+streamlit
+
+# 음성 처리
+SpeechRecognition
+pyaudio
+gTTS
+
+# NLP 및 모델 로딩
+transformers
+torch
+
+# 데이터 처리
+pandas
+numpy
+
+# 데이터베이스
+pymongo
+
+# 기타
+python-dotenv

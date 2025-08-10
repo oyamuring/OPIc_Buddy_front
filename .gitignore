@@ -1,10 +1,13 @@
-# 모델 디렉토리 무시
+# 디렉토리 무시
 model/
-data/
+
+# 특정파일 무시
+data/opic_guide_필요부분발췌.pdf
 
 
 # 캐시 파일
 *.safetensors
 *.pt
 *.bin
-
+__pycache__/
+*.pyc

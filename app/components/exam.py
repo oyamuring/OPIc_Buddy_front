@@ -76,14 +76,14 @@ def _ensure_exam_questions():
     st.session_state.exam_answers = []
 
 def show_exam():
-    st.title("📝 OPIc Mock Test")
+    st.title("OPIc Test")
     _ensure_exam_questions()
 
     qs = st.session_state.exam_questions
     idx = st.session_state.exam_index
 
     if idx >= len(qs):
-        st.success("시험이 종료되었습니다! 👏")
+        st.success("시험이 종료되었습니다.")
         with st.expander("내 답변 확인"):
             for i, (q, a) in enumerate(zip(qs, st.session_state.exam_answers), start=1):
                 st.markdown(f"**Q{i}. {q}**")
