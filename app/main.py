@@ -1,18 +1,4 @@
 # app/main.py
-import os
-import warnings
-import logging
-
-# 모든 경고 숨기기
-warnings.filterwarnings("ignore", category=UserWarning)
-warnings.filterwarnings("ignore", message=".*missing ScriptRunContext.*")
-
-# Streamlit 관련 로그만 ERROR 이상만 출력
-logging.getLogger("streamlit").setLevel(logging.ERROR)
-
-# Streamlit 내부 에러 메시지 숨김
-os.environ["STREAMLIT_SUPPRESS_ERRORS"] = "1"
-
 import streamlit as st
 from components.intro import show_intro
 from components.survey import show_survey
