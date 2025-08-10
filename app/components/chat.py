@@ -1,10 +1,15 @@
-"""
-채팅 화면 컴포넌트
-"""
+import sys
+import os
+
+# 현재 파일(app/components/...) 기준 프로젝트 루트 경로 구하기
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.append(ROOT_DIR)
+
 import streamlit as st
-from utils.speech_utils import display_speech_interface, display_tts_button
-from utils.model_loader import generate_response
-from components.survey import get_user_profile
+from app.utils.speech_utils import display_speech_interface, display_tts_button
+from app.utils.model_loader import generate_response
+from app.components.survey import get_user_profile
 
 def show_chat(gen_pipeline):
     """

@@ -1,9 +1,8 @@
-"""
-설문조사 화면 컴포넌트 - 완전 통합 버전
-모든 설문 관련 로직이 하나의 파일에 포함됨
-"""
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
 import streamlit as st
-from utils.styles import apply_survey_styles, apply_button_styles
+from app.utils.styles import apply_survey_styles, apply_button_styles
 
 # ========================
 # 상수 정의
@@ -680,6 +679,7 @@ def display_navigation_buttons(step, total_steps, can_proceed, answer, sub_answe
                 st.session_state.survey_step += 1
                 st.rerun()
             else:
-                st.session_state.stage = "chat"
+                st.session_state.stage = "exam"
                 st.session_state.survey_step = 0
                 st.rerun()
+

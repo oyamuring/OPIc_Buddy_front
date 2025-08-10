@@ -1,33 +1,38 @@
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from db.db import connect_db
-from embedding import embedding_user_input  # 기존에 만든 함수 재사용
+from embedding import embedding_user_input
 
-def retrieve_top_k(query: str,
-                   model_path: str,
-                   collection_name: str = "embedded_scripts",
-                   k: int = 3) -> list[str]:
-    """
-    1) embedding_user_input으로 query 임베딩
-    2) embedded_scripts 컬렉션에서 저장된 embedding들과
-       코사인 유사도를 계산해
-    3) 상위 k개 line을 반환합니다.
-    """
-
-    # 1) DB에서 미리 임베딩된 문서 로드
+def retrieve_top_k(
+    query: str,
+    model_path: str,
+    collection_name: str = "embedded_opic_samples",
+    k: int = 1,
+    text_field: str = "content",
+    emb_field: str = "embedding",
+    category: str | None = None,          # 선택 필터
+    topic: str | None = None              # 선택 필터
+) -> list[str]:
     col = connect_db(collection_name)
-    docs = list(col.find({}, {"line": 1, "embedding": 1}))
+
+    q = {}
+    if category: q["category"] = category
+    if topic:    q["topic"]    = topic
+
+    raw = list(col.find(q, {text_field: 1, emb_field: 1, "_id": 0}))
+    docs = [d for d in raw if text_field in d and emb_field in d and d[emb_field]]
     if not docs:
         return []
 
-    lines = [d["line"] for d in docs]
-    embeddings = np.array([d["embedding"] for d in docs])  # (N, D)
+    lines = [d[text_field] for d in docs]
+    embeddings = np.asarray([d[emb_field] for d in docs], dtype=np.float32)
 
-    # 2) query 임베딩 (기존 embedding_user_input 재사용)
-    query_emb = embedding_user_input(query, model_path)     # list of floats
-    query_emb = np.array(query_emb).reshape(1, -1)          # (1, D)
+    q_emb = np.asarray(embedding_user_input(query, model_path), dtype=np.float32).reshape(1, -1)
+    if embeddings.shape[1] != q_emb.shape[1]:
+        raise ValueError(f"Dim mismatch: DB {embeddings.shape[1]} vs query {q_emb.shape[1]}")
 
-    # 3) 코사인 유사도 및 top-k 추출
-    sims = cosine_similarity(query_emb, embeddings)[0]      # (N, )
-    idx_topk = np.argsort(sims)[::-1][:k]
-    return [lines[i] for i in idx_topk]
+    sims = cosine_similarity(q_emb, embeddings)[0]
+    k = min(k, len(lines))
+    idx = np.argpartition(sims, -k)[-k:]
+    idx = idx[np.argsort(sims[idx])[::-1]]
+    return [lines[i] for i in idx]
