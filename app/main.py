@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 from components.intro import show_intro
 from components.survey import show_survey
 from components.exam import show_exam   # ★ 추가
@@ -18,9 +19,10 @@ def initialize_session_state():
 
 def main():
     # set_page_config는 가능한 한 가장 먼저 호출
+    favicon_path = os.path.join(os.path.dirname(__file__), "opic buddy.png")
     st.set_page_config(
-        page_title="🤖 OPIc Buddy", 
-        page_icon="opic buddy.png", 
+        page_title="OPIc Buddy", 
+        page_icon=favicon_path, 
         layout="centered"
     )
     initialize_session_state()
