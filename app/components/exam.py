@@ -128,6 +128,8 @@ def show_exam():
                 for i in range(len(qs)):
                     if f"ans_{i}" in st.session_state:
                         del st.session_state[f"ans_{i}"]
+                # 시험 상태 초기화
+                st.session_state.exam_index = 0  # 첫 번째 문제부터 다시 시작
                 st.session_state.exam_completed = False
                 st.session_state.pop("comprehensive_feedback", None)
                 st.rerun()
