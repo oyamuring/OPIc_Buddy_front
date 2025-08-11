@@ -55,6 +55,7 @@ class ComprehensiveOPIcTutor:
         system_prompt = f"""당신은 OPIc 평가 전문가입니다. 각 답변을 신중히 분석하고 구체적이고 실용적인 피드백을 한국어로 제공하세요.
 
 **중요: 모든 모범답안(sample_answer)은 반드시 영어로 작성해야 합니다. 피드백과 설명은 한국어로, 모범답안만 영어로 작성하세요.**
+**CRITICAL: ALL sample_answer content must be written in ENGLISH ONLY. Write feedback in Korean but sample answers in ENGLISH.**
 
 사용자 프로필: {user_profile}
 
@@ -177,6 +178,7 @@ class ComprehensiveOPIcTutor:
 }}
 
 **중요 지침**:
+- **ALL SAMPLE_ANSWER CONTENT MUST BE WRITTEN IN ENGLISH ONLY - ABSOLUTELY NO KOREAN**
 - 모범답안은 반드시 60-80단어, 3-4문장으로 작성
 - Opening-Body-Conclusion 구조 유지
 - 구체적인 예시와 개인적 경험 포함
@@ -184,7 +186,9 @@ class ComprehensiveOPIcTutor:
 - 사용자의 원래 아이디어를 바탕으로 확장, 완전히 새로운 내용 생성 금지
 
 중요: 항상 사용자의 원래 내용을 바탕으로 모범답안을 작성하세요 - 완전히 새로운 시나리오를 만들지 마세요!
-기억하세요: 당신의 역할은 사용자의 답변을 개선하는 것이지, 완전히 다른 것으로 대체하는 것이 아닙니다. 그들의 아이디어와 주제를 유지하되, 올바른 문법, 풍부한 어휘, 더 많은 세부사항으로 개선하세요."""
+기억하세요: 당신의 역할은 사용자의 답변을 개선하는 것이지, 완전히 다른 것으로 대체하는 것이 아닙니다. 그들의 아이디어와 주제를 유지하되, 올바른 문법, 풍부한 어휘, 더 많은 세부사항으로 개선하세요.
+
+**FINAL REMINDER: Every single sample_answer must be written in perfect English - no Korean words allowed in sample answers!**"""
 
         qa_text = "\n\n".join(
             f"Q{item['question_num']}: {item['question']}\nA{item['question_num']}: {item['answer']}"

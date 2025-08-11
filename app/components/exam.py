@@ -250,9 +250,9 @@ def show_exam():
                     st.write("_(no answer)_")
                 st.markdown("---")
 
-        # 통합 AI 피드백 섹션
+        # 통합 OPIc Buddy 피드백 섹션
         if AI_TUTOR_AVAILABLE and st.session_state.get("survey_data"):
-            st.markdown("## 🤖 AI 튜터 종합 피드백")
+            st.markdown("## 🤖 OPIc Buddy 종합 피드백")
 
             if st.button("📊 OPIc 레벨 분석 & 피드백 받기",
                          help="7단계 OPIc 레벨 시스템으로 정확한 평가와 모범답안을 제공합니다",
@@ -465,22 +465,6 @@ def _display_comprehensive_feedback():
 
                 st.markdown("### 📝 내 답변")
                 if answer and answer.strip():
-                    # 디버깅: 사용 가능한 오디오 키 확인
-                    with st.expander("🔍 디버깅 정보", expanded=False):
-                        all_audio_keys = [k for k in st.session_state.keys() if 'audio' in k]
-                        relevant_keys = [k for k in all_audio_keys if str(q_idx) in k or str(q_num) in k or str(q_num-1) in k]
-                        st.write(f"모든 오디오 관련 키: {all_audio_keys}")
-                        st.write(f"관련 오디오 키: {relevant_keys}")
-                        st.write(f"현재 q_num: {q_num}, q_idx: {q_idx}")
-                        
-                        # 각 키의 데이터 타입과 크기 확인
-                        for key in relevant_keys:
-                            data = st.session_state.get(key)
-                            if data is not None:
-                                st.write(f"  {key}: {type(data)}, 크기: {len(data) if hasattr(data, '__len__') else 'N/A'}")
-                            else:
-                                st.write(f"  {key}: None")
-                        
                     # 답변을 읽기 쉽게 표시
                     st.markdown(
                         f'<div style="background-color: #f8f9fa; padding: 12px; border-radius: 8px; '
@@ -490,11 +474,11 @@ def _display_comprehensive_feedback():
                         unsafe_allow_html=True
                     )
                     
-                    # 작고 깔끔한 재생 버튼
+                    # 재생 버튼 (너비를 늘려서 텍스트 안 짤리게)
                     if VOICE_AVAILABLE:
-                        col1, col2, col3 = st.columns([1, 6, 1])
+                        col1, col2 = st.columns([2, 5])  # 너비 비율 조정 (1,6 → 2,5)
                         with col1:
-                            if st.button("🔊", key=f"play_my_answer_{q_num}", help="내 답변 다시 듣기"):
+                            if st.button("🔊 내 답변 다시 듣기", key=f"play_my_answer_{q_num}", help="내 답변 다시 듣기"):
                                 # 여러 가능한 오디오 키를 시도
                                 audio_keys_to_try = [
                                     f"audio_data_{q_idx}",  # unified_answer_input에서 사용하는 키
