@@ -4,7 +4,7 @@ from collections import defaultdict, deque
 from typing import List, Optional, Dict
 from retriever import retrieve_top_k
 
-EMBED_MODEL_PATH = r"C:\PythonEnvs\huggingface\OPIc_Buddy\model\models--intfloat--e5-base-v2\snapshots\f52bf8ec8c7124536f0efb74aca902b2995e5bcd"
+EMBED_MODEL_PATH = "intfloat/e5-base-v2"
 
 # ---------- 휴리스틱 카테고리 분류 ----------
 def infer_category_heuristic(q: str) -> str:

@@ -3,7 +3,7 @@ import torch
 from pymongo import MongoClient
 from transformers import AutoModel, AutoTokenizer
 from tqdm import tqdm
-from OPIc_Buddy.db.db import connect_db
+from db.db import connect_db  # 기존에 작성된 DB 연결 함수 재사용
 
 # 임베딩 하는 클래스
 class E5Embedder:
