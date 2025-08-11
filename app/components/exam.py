@@ -232,7 +232,13 @@ def _ensure_exam_questions():
 
 
 def show_exam():
-    st.title("OPIc Buddy")
+    # 로고와 타이틀을 함께 표시
+    col1, col2 = st.columns([1, 5])
+    with col1:
+        st.image("opic buddy.png", width=60)
+    with col2:
+        st.markdown("<h1 style='margin-top: 10px; color: #495057;'>OPIc Buddy</h1>", unsafe_allow_html=True)
+    
     _ensure_exam_questions()
 
     qs = st.session_state.exam_questions

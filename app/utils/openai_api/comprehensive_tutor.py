@@ -146,6 +146,12 @@ Rewrite requirements:
 - **무응답 질문에 대해서는 질문 내용에 맞는 완전한 영어 모범답안 작성**
 - 무응답인 경우에도 해당 질문에 대한 자연스럽고 구체적인 영어 답변 예시 제공
 
+**중요: 무응답("무응답") 처리 규칙**
+- 답변이 "무응답"인 경우 점수는 반드시 0점으로 설정
+- strengths는 빈 배열 []로 설정
+- improvements에는 구체적인 답변 방법 가이드 제공
+- sample_answer는 해당 질문에 완벽한 영어 모범답안 작성
+
 무응답 질문 처리 방법:
 - 질문의 핵심을 파악하고 일반적이고 자연스러운 답변 작성
 - 개인 경험이나 의견을 포함한 현실적인 영어 답변
@@ -205,6 +211,15 @@ JSON으로만 응답하세요. 다음 형식을 따르세요:
                 qn = item.get("question_num")
                 q = next((x["question"] for x in all_qa if x["question_num"] == qn), "")
                 ua = next((x["answer"] for x in all_qa if x["question_num"] == qn), "")
+                
+                # 무응답 처리: 강제로 0점, 빈 strengths 설정
+                if ua == "무응답":
+                    item["score"] = 0
+                    item["strengths"] = []
+                    if not item.get("improvements"):
+                        item["improvements"] = ["질문에 답변하기", "개인 경험 포함하기", "구체적인 세부사항 제공"]
+                
+                # 영어 모범답안 보정
                 fixed = self._fix_sample_answer(q, ua, sa)
                 item["sample_answer"] = fixed
 

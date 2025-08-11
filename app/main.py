@@ -18,7 +18,11 @@ def initialize_session_state():
 
 def main():
     # set_page_config는 가능한 한 가장 먼저 호출
-    st.set_page_config(page_title="🤖 OPIc Buddy", page_icon="🤖", layout="centered")
+    st.set_page_config(
+        page_title="🤖 OPIc Buddy", 
+        page_icon="opic buddy.png", 
+        layout="centered"
+    )
     initialize_session_state()
 
     if st.session_state.stage == "intro":
