@@ -18,6 +18,14 @@ except ImportError:
     AI_TUTOR_AVAILABLE = False
     print("⚠️ OpenAI API를 사용할 수 없습니다. 기본 피드백을 사용합니다.")
 
+# 음성 기능 모듈 추가
+try:
+    from app.utils.voice_utils import VoiceManager, unified_answer_input
+    VOICE_AVAILABLE = True
+except ImportError:
+    VOICE_AVAILABLE = False
+    print("⚠️ 음성 기능을 사용할 수 없습니다.")
+
 DATA_DIR = ROOT / "data"
 DEFAULT_SURVEY_KEYS = [
     "dormitory", "student", "driving", "travel", "hobby",
@@ -180,10 +188,44 @@ def show_exam():
 
     # 진행도/문항
     st.progress((idx + 1) / len(qs))
-    st.caption(f"Question {idx + 1} / {len(qs)}")
-    st.subheader(qs[idx])
-
-    answer = st.text_area("Your answer (English)", key=f"ans_{idx}", height=160)
+    st.caption(f"Question {idx+1} / {len(qs)}")
+    
+    # 현재 문제를 세션에 저장 (TTS용)
+    st.session_state.current_question = qs[idx]
+    
+    # 음성 기능 섹션
+    if VOICE_AVAILABLE:
+        # 문제가 바뀌었을 때 자동으로 음성 재생
+        auto_play_key = f"auto_played_{idx}"
+        if auto_play_key not in st.session_state:
+            voice_manager = VoiceManager()
+            voice_manager.play_question_audio(qs[idx])
+            st.session_state[auto_play_key] = True
+        
+        # 토글로 텍스트 문제 보기/숨기기
+        show_text = st.toggle("📝 문제 텍스트 보기", key=f"show_text_{idx}")
+        
+        if show_text:
+            st.info(f"**문제:** {qs[idx]}")
+            
+            # 수동 재생 버튼 (다시 듣기용) - 텍스트 보기할 때만 표시
+            if st.button("다시 듣기", help="질문을 다시 음성으로 읽어드립니다", key=f"replay_{idx}"):
+                voice_manager = VoiceManager()
+                voice_manager.play_question_audio(qs[idx])
+    else:
+        # 음성 기능이 없을 때는 일반적으로 문제 표시
+        st.subheader(qs[idx])
+    
+    st.markdown("### 답변 입력")
+    
+    # 통합된 답변 입력 인터페이스 사용
+    if VOICE_AVAILABLE:
+        answer = unified_answer_input(idx, qs[idx])
+    else:
+        # 음성 기능이 없을 때는 기본 텍스트 입력만
+        answer = st.text_area("Your answer (English)", key=f"ans_{idx}", height=160)
+    
+    st.markdown("---")
 
     col1, col2 = st.columns([1, 4])
     with col1:
@@ -193,18 +235,46 @@ def show_exam():
 
 
 def _go_back():
-    st.session_state.exam_index -= 1
+    current_idx = st.session_state.exam_index
+    prev_idx = current_idx - 1
+    
+    # 이전 문제의 자동 재생 플래그를 초기화 (다시 들을 수 있도록)
+    if f"auto_played_{prev_idx}" in st.session_state:
+        del st.session_state[f"auto_played_{prev_idx}"]
+    
+    st.session_state.exam_index = prev_idx
 
 
 def _go_next(answer: str):
     idx = st.session_state.exam_index
+    
+    # 음성 기능이 사용 가능한 경우 자동 변환 시도
+    if VOICE_AVAILABLE:
+        from app.utils.voice_utils import auto_convert_audio_if_needed
+        
+        # 자동 변환된 답변이 있다면 사용
+        auto_converted_answer = auto_convert_audio_if_needed(idx)
+        if auto_converted_answer:
+            answer = auto_converted_answer
+    
     answers = st.session_state.exam_answers
     if len(answers) <= idx:
         answers.append(answer)
     else:
         answers[idx] = answer
     st.session_state.exam_answers = answers
-    st.session_state.exam_index = idx + 1
+    
+    # 다음 문제로 넘어가기 전에 현재 답변 표시 관련 세션 상태 정리
+    next_idx = idx + 1
+    if f"ans_{next_idx}" in st.session_state:
+        # 다음 문제에 이미 답변이 있으면 표시하지 않도록 임시 플래그 설정
+        st.session_state[f"hide_current_answer_{next_idx}"] = True
+    
+    # 다음 문제의 자동 재생 플래그 초기화 (음성이 확실히 재생되도록)
+    if f"auto_played_{next_idx}" in st.session_state:
+        del st.session_state[f"auto_played_{next_idx}"]
+    
+    st.session_state.exam_index = next_idx
 
 
 def _generate_comprehensive_feedback():
