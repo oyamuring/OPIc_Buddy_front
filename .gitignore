@@ -3,6 +3,7 @@ model/
 
 # 특정파일 무시
 data/opic_guide_필요부분발췌.pdf
+.env
 
 
 # 캐시 파일

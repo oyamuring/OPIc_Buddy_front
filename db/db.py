@@ -1,18 +1,21 @@
-from pymongo import MongoClient
 import os
 import json
-
+from pymongo import MongoClient
+from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_JSON_PATH = os.path.join(BASE_DIR, "data", "seed_contexts.json")
-API_KEY = "mongodb+srv://hakliml22:Lifegoeson%211@cluster0.1ryjiuy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
-MONGO_URI = os.getenv(
-    "MONGO_URI",
-    API_KEY
-)
+# .env 로드 (없으면 무시)
+load_dotenv()
 
+MONGO_URI = os.getenv("MONGO_URI")
 DB_NAME = "OPIcBuddy"
+
+if not MONGO_URI:
+    raise RuntimeError(
+        "MONGO_URI 환경변수가 비어 있습니다. 루트의 .env 파일 또는 OS 환경변수를 설정하세요."
+    )
 
 def connect_db(collection_name):
     try:
@@ -30,26 +33,20 @@ def upload_contents(json_path, collection_name, overwrite=True, uri=None):
     col = connect_db(collection_name)
     if col is None:
         return
-
-    # 1. JSON 로드
     with open(json_path, 'r', encoding='utf-8') as f:
         raw = json.load(f)
 
-    # 2. 리스트 형태로 변환
     docs = []
-    for category, topics in raw.items():           # survey / role_play
-        for topic, prompts in topics.items():      # e.g. "Housing", ["Tell me ..."]
+    for category, topics in raw.items():
+        for topic, prompts in topics.items():
             docs.append({
-                "category": category,              # "survey" 또는 "role_play"
-                "topic": topic,                    # "Housing", "School" 등
-                "content": prompts                 # 질문 리스트
+                "category": category,
+                "topic": topic,
+                "content": prompts
             })
 
-    # 3. 덮어쓰기 옵션
     if overwrite:
         col.delete_many({})
 
-    # 4. 삽입
     result = col.insert_many(docs)
     print(f"Inserted {len(result.inserted_ids)} documents into {DB_NAME}.{collection_name}")
-

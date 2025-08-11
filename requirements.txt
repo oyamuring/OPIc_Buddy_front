@@ -18,4 +18,4 @@ numpy
 pymongo
 
 # 기타
-python-dotenv
+python-dotenv>=1.0

@@ -3,9 +3,9 @@ import torch
 from pymongo import MongoClient
 from transformers import AutoModel, AutoTokenizer
 from tqdm import tqdm
-from db.db import connect_db  # 기존에 작성된 DB 연결 함수 재사용
+from OPIc_Buddy.db.db import connect_db
 
-
+# 임베딩 하는 클래스
 class E5Embedder:
     def __init__(self, model_path, pooling="mean"):
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
@@ -24,6 +24,7 @@ class E5Embedder:
             emb = outputs.last_hidden_state[:, 0, :]
         return emb.numpy().tolist()
 
+# 임베딩 클래스를 이용한 임베딩 함수
 def embedding_collection(
     input_collection: str,
     output_collection: str,
@@ -64,7 +65,7 @@ def embedding_collection(
     if batch:
         tgt_col.insert_many(batch)
 
-# 사용자 입력 임베딩 함수
+# 임베딩 클래스를 이용한사용자 입력 임베딩 함수
 def embedding_user_input(text, model_path):
     embedder = E5Embedder(model_path)
     return embedder.encode(text)[0]
