@@ -590,6 +590,40 @@ def _display_comprehensive_feedback():
                         f'</div>', 
                         unsafe_allow_html=True
                     )
+                    
+                    # 모범답안 TTS 재생 버튼 추가
+                    if VOICE_AVAILABLE:
+                        col1, col2 = st.columns([2, 5])
+                        with col1:
+                            if st.button("🎧 모범답안 듣기", key=f"play_sample_answer_{q_num}", help="모범답안을 음성으로 듣기"):
+                                try:
+                                    from app.utils.voice_utils import VoiceManager
+                                    vm = VoiceManager()
+                                    # 강조 표시 제거한 순수 텍스트로 TTS 생성
+                                    clean_sample_answer = sample_answer.strip()
+                                    audio_bytes = vm.text_to_speech(clean_sample_answer)
+                                    if audio_bytes:
+                                        st.session_state[f"play_sample_{q_num}"] = audio_bytes
+                                        st.success("모범답안을 음성으로 재생합니다.")
+                                    else:
+                                        st.error("모범답안 음성 변환에 실패했습니다.")
+                                except Exception as e:
+                                    st.error(f"모범답안 음성 재생 중 오류: {e}")
+                        
+                        # 모범답안 재생할 음성이 있으면 표시
+                        sample_play_key = f"play_sample_{q_num}"
+                        if sample_play_key in st.session_state:
+                            audio_data = st.session_state[sample_play_key]
+                            if audio_data is not None and isinstance(audio_data, bytes) and len(audio_data) > 0:
+                                try:
+                                    st.audio(audio_data)
+                                except Exception as e:
+                                    st.error(f"모범답안 오디오 재생 오류: {str(e)}")
+                            # 재생 후 세션에서 제거
+                            try:
+                                del st.session_state[sample_play_key]
+                            except:
+                                pass
 
                 st.markdown("---")
 
