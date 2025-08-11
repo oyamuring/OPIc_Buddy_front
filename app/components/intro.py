@@ -11,20 +11,16 @@ def show_intro():
     # 스타일 적용
     apply_intro_styles()
 
-    # 로고와 타이틀
-    col1, col2, col3 = st.columns([1, 1, 4])
-    with col2:
-        st.image("opic buddy.png", width=80)
-    with col3:
-        st.markdown("""
-        <div style='text-align: left; margin-top: 15px;'>
-            <h2 style="font-size:2.1rem; margin: 0;">
-                🔊 <span style='color:#36f; font-weight:bold;'>Oral Proficiency Interview - computer</span>
-                <span style='color: #36f; font-weight:bold;'>(OPIc)</span>
-            </h2>
-            <p style="font-size:1.25rem; font-weight:bold; margin: 10px 0 0 0;">지금부터 <span style='color:#f4621f; font-weight:bold;'>English 말하기 평가</span>를 시작하겠습니다.</p>
-        </div>
-        """, unsafe_allow_html=True)
+    # 타이틀 + 설명
+    st.markdown("""
+    <div class="block-welcome" style='text-align: center;'>
+        <h2 class="opic-header" style="font-size:2.1rem;">
+            🔊 <span style='color:#36f; font-weight:bold;'>Oral Proficiency Interview - computer</span>
+            <span style='color: #36f; font-weight:bold;'>(OPIc)</span>
+        </h2>
+        <p style="font-size:1.25rem; font-weight:bold;">지금부터 <span style='color:#f4621f; font-weight:bold;'>English 말하기 평가</span>를 시작하겠습니다.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     # Ava 이미지 + 설명
     _display_ava_image()
