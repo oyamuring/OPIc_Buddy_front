@@ -1,5 +1,17 @@
 {
   "survey": {
+    "have work experience": [
+      "Tell me about your job. What kind of work did you do, and what were your main responsibilities?",
+      "Can you describe a memorable project or work experience you had? Please give me some details.",
+      "Have you ever faced a difficult problem at work? Tell me about the situation and how you handled it",
+      "What do you consider your greatest achievement in your career? How did you accomplish it?",
+      "Have you ever made a mistake at work? What did you learn from it, and how did you overcome it?",
+      "What was your role at your previous job, and how did you contribute to your team?",
+      "How were your relationships with your boss or coworkers? Tell me about a time you had a conflict and how you resolved it.",
+      "What did you find most satisfying and most challenging about your previous job?",
+      "What did you do to improve your work efficiency? Can you give me a specific example?",
+      "How do you think your past work experience has influenced you today?"
+    ],
     "living alone in a house/apartment": [
       "What is the biggest challenge of living alone?",
       "Tell me about the best part of having your own place.",
