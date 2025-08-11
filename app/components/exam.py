@@ -1,4 +1,4 @@
-import sys, json, time
+import sys, json, time, difflib, re
 from pathlib import Path
 import streamlit as st
 
@@ -32,6 +32,102 @@ DEFAULT_SURVEY_KEYS = [
     "food", "family", "friend", "neighborhood", "shopping",
     "sports", "health", "movie", "music", "part-time job"
 ]
+
+
+def _classify_change_type(original_part, improved_part):
+    """
+    변화의 유형을 분류: 문법 수정 vs 내용 추가
+    """
+    # 문법 수정 키워드들
+    grammar_indicators = [
+        'is', 'are', 'was', 'were', 'have', 'has', 'had',  # 동사 변화
+        'a', 'an', 'the',  # 관사
+        'in', 'on', 'at', 'with', 'by', 'for',  # 전치사
+        'and', 'but', 'or', 'so', 'because',  # 접속사
+        'ed', 'ing', 's'  # 어미 변화
+    ]
+    
+    # 내용 추가 키워드들 (더 구체적이고 설명적인 단어들)
+    content_indicators = [
+        'really', 'very', 'extremely', 'especially', 'particularly',
+        'for example', 'such as', 'including', 'like',
+        'beautiful', 'amazing', 'wonderful', 'fantastic',
+        'years', 'months', 'since', 'always', 'often', 'usually',
+        'because', 'therefore', 'moreover', 'furthermore'
+    ]
+    
+    original_lower = original_part.lower()
+    improved_lower = improved_part.lower()
+    
+    # 길이가 많이 늘어났으면 내용 추가로 간주
+    if len(improved_part) > len(original_part) * 1.5:
+        return 'content'
+    
+    # 내용 추가 키워드가 있으면 내용 추가
+    for indicator in content_indicators:
+        if indicator in improved_lower and indicator not in original_lower:
+            return 'content'
+    
+    # 문법 키워드만 바뀌었으면 문법 수정
+    for indicator in grammar_indicators:
+        if indicator in improved_lower or indicator in original_lower:
+            return 'grammar'
+    
+    # 기본적으로는 문법 수정으로 간주
+    return 'grammar'
+
+
+def _highlight_text_differences(original_text, improved_text):
+    """
+    원본 텍스트와 개선된 텍스트를 비교해서 엄청 다른 부분만 색깔별로 강조
+    """
+    if not original_text or not original_text.strip():
+        # 원본이 없으면 개선된 텍스트 그대로 반환
+        return improved_text
+    
+    # 문장을 단어 단위로 분리 (공백과 구두점 포함)
+    original_words = re.findall(r'\S+|\s+', original_text.lower())
+    improved_words = re.findall(r'\S+|\s+', improved_text)
+    improved_words_lower = re.findall(r'\S+|\s+', improved_text.lower())
+    
+    # difflib으로 차이점 찾기
+    differ = difflib.SequenceMatcher(None, original_words, improved_words_lower)
+    
+    result_html = ""
+    for tag, i1, i2, j1, j2 in differ.get_opcodes():
+        if tag == 'equal':
+            # 같은 부분은 그대로 표시
+            result_html += ''.join(improved_words[j1:j2])
+        elif tag == 'replace':
+            # 바뀐 부분의 유형을 분류
+            replaced_text = ''.join(improved_words[j1:j2])
+            original_part = ''.join(original_words[i1:i2])
+            
+            # 단순한 대소문자 변화나 아주 짧은 변화는 무시
+            if len(replaced_text.strip()) >= 3 and original_part.strip().lower() != replaced_text.strip().lower():
+                change_type = _classify_change_type(original_part, replaced_text)
+                if change_type == 'grammar':
+                    result_html += f'<strong style="color: #d32f2f;">{replaced_text}</strong>'  # 빨간색
+                else:
+                    result_html += f'<strong style="color: #1976d2;">{replaced_text}</strong>'  # 파란색
+            else:
+                result_html += replaced_text
+        elif tag == 'insert':
+            # 새로 추가된 부분의 유형을 분류 (3글자 이상)
+            inserted_text = ''.join(improved_words[j1:j2])
+            if len(inserted_text.strip()) >= 3:
+                change_type = _classify_change_type('', inserted_text)
+                if change_type == 'grammar':
+                    result_html += f'<strong style="color: #d32f2f;">{inserted_text}</strong>'  # 빨간색
+                else:
+                    result_html += f'<strong style="color: #1976d2;">{inserted_text}</strong>'  # 파란색
+            else:
+                result_html += inserted_text
+        elif tag == 'delete':
+            # 삭제된 부분은 표시하지 않음
+            pass
+    
+    return result_html
 
 
 def _load_survey_keys():
@@ -136,7 +232,7 @@ def _ensure_exam_questions():
 
 
 def show_exam():
-    st.title("OPIc Test")
+    st.title("OPIc Buddy")
     _ensure_exam_questions()
 
     qs = st.session_state.exam_questions
@@ -229,7 +325,10 @@ def show_exam():
 
     col1, col2 = st.columns([1, 4])
     with col1:
-        st.button("← Back", disabled=(idx == 0), on_click=_go_back)
+        if idx == 0:
+            st.button("← Survey", on_click=_go_to_survey)
+        else:
+            st.button("← Back", on_click=_go_back)
     with col2:
         st.button("Next →", on_click=_go_next, args=(answer,))
 
@@ -243,6 +342,11 @@ def _go_back():
         del st.session_state[f"auto_played_{prev_idx}"]
     
     st.session_state.exam_index = prev_idx
+
+
+def _go_to_survey():
+    """첫 번째 문제에서 Survey 버튼을 누르면 설문조사로 돌아가기"""
+    st.session_state.stage = "survey"
 
 
 def _go_next(answer: str):
@@ -361,47 +465,196 @@ def _display_comprehensive_feedback():
 
                 st.markdown("### 📝 내 답변")
                 if answer and answer.strip():
-                    st.write(f'"{answer}"')
+                    # 디버깅: 사용 가능한 오디오 키 확인
+                    with st.expander("🔍 디버깅 정보", expanded=False):
+                        all_audio_keys = [k for k in st.session_state.keys() if 'audio' in k]
+                        relevant_keys = [k for k in all_audio_keys if str(q_idx) in k or str(q_num) in k or str(q_num-1) in k]
+                        st.write(f"모든 오디오 관련 키: {all_audio_keys}")
+                        st.write(f"관련 오디오 키: {relevant_keys}")
+                        st.write(f"현재 q_num: {q_num}, q_idx: {q_idx}")
+                        
+                        # 각 키의 데이터 타입과 크기 확인
+                        for key in relevant_keys:
+                            data = st.session_state.get(key)
+                            if data is not None:
+                                st.write(f"  {key}: {type(data)}, 크기: {len(data) if hasattr(data, '__len__') else 'N/A'}")
+                            else:
+                                st.write(f"  {key}: None")
+                        
+                    # 답변을 읽기 쉽게 표시
+                    st.markdown(
+                        f'<div style="background-color: #f8f9fa; padding: 12px; border-radius: 8px; '
+                        f'border-left: 3px solid #007bff; margin: 8px 0;">'
+                        f'<div style="font-style: italic; color: #495057; word-wrap: break-word; word-break: break-word;">"{answer}"</div>'
+                        f'</div>', 
+                        unsafe_allow_html=True
+                    )
+                    
+                    # 작고 깔끔한 재생 버튼
+                    if VOICE_AVAILABLE:
+                        col1, col2, col3 = st.columns([1, 6, 1])
+                        with col1:
+                            if st.button("🔊", key=f"play_my_answer_{q_num}", help="내 답변 다시 듣기"):
+                                # 여러 가능한 오디오 키를 시도
+                                audio_keys_to_try = [
+                                    f"audio_data_{q_idx}",  # unified_answer_input에서 사용하는 키
+                                    f"audio_{q_idx}",       # 이전 버전 호환성
+                                    f"audio_data_{q_num-1}", # 인덱스 차이 고려
+                                    f"audio_{q_num-1}"      # 이전 버전 호환성 2
+                                ]
+                                audio_found = False
+                                
+                                for audio_key in audio_keys_to_try:
+                                    if audio_key in st.session_state and st.session_state[audio_key] is not None:
+                                        # 원본 녹음 재생
+                                        audio_data = st.session_state[audio_key]
+                                        if isinstance(audio_data, bytes) and len(audio_data) > 0:
+                                            st.session_state[f"play_original_{q_num}"] = audio_data
+                                            audio_found = True
+                                            st.success("원본 녹음을 재생합니다.")
+                                            break
+                                
+                                if not audio_found:
+                                    # 녹음된 음성이 없으면 TTS로 변환해서 재생
+                                    try:
+                                        from app.utils.voice_utils import VoiceManager
+                                        vm = VoiceManager()
+                                        audio_bytes = vm.text_to_speech(answer)
+                                        if audio_bytes:
+                                            st.session_state[f"play_original_{q_num}"] = audio_bytes
+                                            st.info("답변을 음성으로 변환하여 재생합니다.")
+                                        else:
+                                            st.error("음성 변환에 실패했습니다.")
+                                    except Exception as e:
+                                        st.error(f"음성 재생 중 오류: {e}")
+                        
+                        # 재생할 음성이 있으면 표시 (오류 방지: 키 존재 여부 먼저 확인)
+                        play_key = f"play_original_{q_num}"
+                        if play_key in st.session_state:
+                            audio_data = st.session_state[play_key]
+                            # 오디오 데이터가 유효한지 확인
+                            if audio_data is not None and isinstance(audio_data, bytes) and len(audio_data) > 0:
+                                try:
+                                    st.audio(audio_data)
+                                except Exception as e:
+                                    st.error(f"오디오 재생 오류: {str(e)}")
+                            # 재생 후 세션에서 제거 (다음 번에 다시 클릭해야 재생)
+                            try:
+                                del st.session_state[play_key]
+                            except:
+                                pass  # 이미 삭제되었을 경우 무시
                 else:
                     st.write("_(답변 없음)_")
 
                 st.markdown("### 💭 피드백")
 
-                col1, col2 = st.columns(2)
+                col1, col2 = st.columns(2, gap="medium")
                 with col1:
-                    st.markdown("**💪 잘한 점**")
+                    st.markdown(
+                        '<div style="background: linear-gradient(135deg, #e8f5e8, #f1f8e9); '
+                        'padding: 12px; border-radius: 10px; border-left: 4px solid #4caf50; margin-bottom: 10px;">'
+                        '<h4 style="color: #2e7d32; margin: 0; font-size: 1.1em;">💪 잘한 점</h4></div>',
+                        unsafe_allow_html=True
+                    )
                     for strength in item.get("strengths", []):
-                        st.write(f"• {strength}")
+                        st.markdown(
+                            f'<div style="background-color: #f9f9f9; padding: 8px 12px; margin: 4px 0; '
+                            f'border-radius: 6px; border-left: 3px solid #4caf50;">'
+                            f'<span style="color: #2e7d32;">✓ {strength}</span></div>',
+                            unsafe_allow_html=True
+                        )
 
                 with col2:
-                    st.markdown("**🎯 개선점**")
+                    st.markdown(
+                        '<div style="background: linear-gradient(135deg, #fff3e0, #fef7e0); '
+                        'padding: 12px; border-radius: 10px; border-left: 4px solid #ff9800; margin-bottom: 10px;">'
+                        '<h4 style="color: #e65100; margin: 0; font-size: 1.1em;">🎯 개선점</h4></div>',
+                        unsafe_allow_html=True
+                    )
                     for improvement in item.get("improvements", []):
-                        st.write(f"• {improvement}")
+                        st.markdown(
+                            f'<div style="background-color: #f9f9f9; padding: 8px 12px; margin: 4px 0; '
+                            f'border-radius: 6px; border-left: 3px solid #ff9800;">'
+                            f'<span style="color: #e65100;">→ {improvement}</span></div>',
+                            unsafe_allow_html=True
+                        )
 
                 sample_answer = item.get("sample_answer", "")
                 if sample_answer:
                     st.markdown("### ✨ 개선된 모범답안")
-                    st.success(f'"{sample_answer}"')
+                    
+                    # 예쁜 색상 구분 설명
+                    st.markdown(
+                        '<div style="background: linear-gradient(90deg, #fff3e0, #e3f2fd); padding: 8px 12px; '
+                        'border-radius: 20px; margin: 8px 0; text-align: center; border: 1px solid #e0e0e0;">'
+                        '<span style="font-size: 0.85em; color: #666;">'
+                        '🔴 <span style="color: #d32f2f; font-weight: 600;">문법 수정</span> | '
+                        '🔵 <span style="color: #1976d2; font-weight: 600;">내용 추가</span>'
+                        '</span></div>',
+                        unsafe_allow_html=True
+                    )
+                    
+                    # 사용자 답변과 모범답안을 비교해서 다른 부분만 색깔별로 강조
+                    highlighted_answer = _highlight_text_differences(answer, sample_answer)
+                    
+                    # 모범답안을 읽기 쉽게 표시
+                    st.markdown(
+                        f'<div style="background: linear-gradient(135deg, #f8f9fa, #e8f5e8); '
+                        f'padding: 16px; border-radius: 12px; margin: 10px 0; '
+                        f'border-left: 4px solid #28a745; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">'
+                        f'<div style="font-style: italic; line-height: 1.8; color: #495057; font-size: 1.05em; word-wrap: break-word; word-break: break-word;">"{highlighted_answer}"</div>'
+                        f'</div>', 
+                        unsafe_allow_html=True
+                    )
 
                 st.markdown("---")
 
     st.markdown("## 🎯 종합 평가")
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2, gap="large")
 
     with col1:
-        st.markdown("### 🌟 전체 강점")
+        st.markdown(
+            '<div style="background: linear-gradient(135deg, #e3f2fd, #e8eaf6); '
+            'padding: 16px; border-radius: 12px; border-left: 4px solid #2196f3; margin-bottom: 15px;">'
+            '<h3 style="color: #0d47a1; margin: 0 0 12px 0; font-size: 1.2em;">🌟 전체 강점</h3></div>',
+            unsafe_allow_html=True
+        )
         overall_strengths = feedback.get("overall_strengths", [])
         for strength in overall_strengths:
-            st.write(f"✓ {strength}")
+            st.markdown(
+                f'<div style="background: linear-gradient(90deg, #f8f9fa, #e3f2fd); '
+                f'padding: 10px 14px; margin: 6px 0; border-radius: 8px; '
+                f'border-left: 3px solid #2196f3; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">'
+                f'<span style="color: #0d47a1; font-weight: 500;">✨ {strength}</span></div>',
+                unsafe_allow_html=True
+            )
 
     with col2:
-        st.markdown("### 📈 우선 개선사항")
+        st.markdown(
+            '<div style="background: linear-gradient(135deg, #ffe0b2, #ffecb3); '
+            'padding: 16px; border-radius: 12px; border-left: 4px solid #ff9800; margin-bottom: 15px;">'
+            '<h3 style="color: #e65100; margin: 0 0 12px 0; font-size: 1.2em;">📈 우선 개선사항</h3></div>',
+            unsafe_allow_html=True
+        )
         priority_improvements = feedback.get("priority_improvements", [])
         for improvement in priority_improvements:
-            st.write(f"→ {improvement}")
+            st.markdown(
+                f'<div style="background: linear-gradient(90deg, #fff8e1, #ffe0b2); '
+                f'padding: 10px 14px; margin: 6px 0; border-radius: 8px; '
+                f'border-left: 3px solid #ff9800; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">'
+                f'<span style="color: #e65100; font-weight: 500;">🎯 {improvement}</span></div>',
+                unsafe_allow_html=True
+            )
 
     study_recommendations = feedback.get("study_recommendations", "")
     if study_recommendations:
-        st.markdown("### 💡 학습 추천사항")
-        st.info(study_recommendations)
+        st.markdown(
+            '<div style="background: linear-gradient(135deg, #f3e5f5, #e1bee7); '
+            'padding: 20px; border-radius: 15px; margin: 20px 0; '
+            'border-left: 5px solid #9c27b0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">'
+            '<h3 style="color: #4a148c; margin: 0 0 12px 0; font-size: 1.3em;">💡 학습 추천사항</h3>'
+            f'<p style="color: #6a1b9a; line-height: 1.6; margin: 0; font-size: 1.05em;">{study_recommendations}</p>'
+            '</div>',
+            unsafe_allow_html=True
+        )

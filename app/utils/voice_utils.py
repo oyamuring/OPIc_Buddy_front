@@ -180,9 +180,9 @@ def auto_convert_audio_if_needed(question_idx: int) -> str:
             if transcript and not transcript.startswith("[Voice recording"):
                 # 변환된 텍스트를 답변으로 저장
                 st.session_state[answer_key] = transcript
-                # 오디오 데이터는 삭제 (중복 변환 방지)
-                if audio_key in st.session_state:
-                    del st.session_state[audio_key]
+                # 오디오 데이터는 피드백에서 재생하기 위해 유지 (삭제하지 않음)
+                # 피드백 페이지에서 접근할 수 있도록 추가 키로도 저장
+                st.session_state[f"audio_{question_idx}"] = audio_data
                 return transcript
             else:
                 return "[Voice recording - conversion failed]"
