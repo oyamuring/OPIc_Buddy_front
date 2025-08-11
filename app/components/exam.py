@@ -535,31 +535,31 @@ def _display_comprehensive_feedback():
                 col1, col2 = st.columns(2, gap="medium")
                 with col1:
                     st.markdown(
-                        '<div style="background: linear-gradient(135deg, #e8f5e8, #f1f8e9); '
-                        'padding: 12px; border-radius: 10px; border-left: 4px solid #4caf50; margin-bottom: 10px;">'
-                        '<h4 style="color: #2e7d32; margin: 0; font-size: 1.1em;">💪 잘한 점</h4></div>',
+                        '<div style="background-color: #f8f9fa; '
+                        'padding: 12px; border-radius: 8px; border-left: 4px solid #28a745; margin-bottom: 10px;">'
+                        '<h4 style="color: #155724; margin: 0; font-size: 1.1em;">💪 잘한 점</h4></div>',
                         unsafe_allow_html=True
                     )
                     for strength in item.get("strengths", []):
                         st.markdown(
-                            f'<div style="background-color: #f9f9f9; padding: 8px 12px; margin: 4px 0; '
-                            f'border-radius: 6px; border-left: 3px solid #4caf50;">'
-                            f'<span style="color: #2e7d32;">✓ {strength}</span></div>',
+                            f'<div style="background-color: #f8f9fa; padding: 8px 12px; margin: 4px 0; '
+                            f'border-radius: 6px; border-left: 3px solid #28a745;">'
+                            f'<span style="color: #155724;">✓ {strength}</span></div>',
                             unsafe_allow_html=True
                         )
 
                 with col2:
                     st.markdown(
-                        '<div style="background: linear-gradient(135deg, #fff3e0, #fef7e0); '
-                        'padding: 12px; border-radius: 10px; border-left: 4px solid #ff9800; margin-bottom: 10px;">'
-                        '<h4 style="color: #e65100; margin: 0; font-size: 1.1em;">🎯 개선점</h4></div>',
+                        '<div style="background-color: #f8f9fa; '
+                        'padding: 12px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 10px;">'
+                        '<h4 style="color: #856404; margin: 0; font-size: 1.1em;">🎯 개선점</h4></div>',
                         unsafe_allow_html=True
                     )
                     for improvement in item.get("improvements", []):
                         st.markdown(
-                            f'<div style="background-color: #f9f9f9; padding: 8px 12px; margin: 4px 0; '
-                            f'border-radius: 6px; border-left: 3px solid #ff9800;">'
-                            f'<span style="color: #e65100;">→ {improvement}</span></div>',
+                            f'<div style="background-color: #f8f9fa; padding: 8px 12px; margin: 4px 0; '
+                            f'border-radius: 6px; border-left: 3px solid #ffc107;">'
+                            f'<span style="color: #856404;">→ {improvement}</span></div>',
                             unsafe_allow_html=True
                         )
 
@@ -567,13 +567,13 @@ def _display_comprehensive_feedback():
                 if sample_answer:
                     st.markdown("### ✨ 개선된 모범답안")
                     
-                    # 예쁜 색상 구분 설명
+                    # 간단한 색상 구분 설명
                     st.markdown(
-                        '<div style="background: linear-gradient(90deg, #fff3e0, #e3f2fd); padding: 8px 12px; '
-                        'border-radius: 20px; margin: 8px 0; text-align: center; border: 1px solid #e0e0e0;">'
-                        '<span style="font-size: 0.85em; color: #666;">'
-                        '🔴 <span style="color: #d32f2f; font-weight: 600;">문법 수정</span> | '
-                        '🔵 <span style="color: #1976d2; font-weight: 600;">내용 추가</span>'
+                        '<div style="background-color: #f8f9fa; padding: 8px 12px; '
+                        'border-radius: 8px; margin: 8px 0; text-align: center; border: 1px solid #dee2e6;">'
+                        '<span style="font-size: 0.85em; color: #6c757d;">'
+                        '🔴 <span style="color: #dc3545; font-weight: 500;">문법 수정</span> | '
+                        '🔵 <span style="color: #0d6efd; font-weight: 500;">내용 추가</span>'
                         '</span></div>',
                         unsafe_allow_html=True
                     )
@@ -583,9 +583,9 @@ def _display_comprehensive_feedback():
                     
                     # 모범답안을 읽기 쉽게 표시
                     st.markdown(
-                        f'<div style="background: linear-gradient(135deg, #f8f9fa, #e8f5e8); '
-                        f'padding: 16px; border-radius: 12px; margin: 10px 0; '
-                        f'border-left: 4px solid #28a745; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">'
+                        f'<div style="background-color: #f8f9fa; '
+                        f'padding: 16px; border-radius: 8px; margin: 10px 0; '
+                        f'border-left: 4px solid #0d6efd;">'
                         f'<div style="font-style: italic; line-height: 1.8; color: #495057; font-size: 1.05em; word-wrap: break-word; word-break: break-word;">"{highlighted_answer}"</div>'
                         f'</div>', 
                         unsafe_allow_html=True
@@ -633,46 +633,46 @@ def _display_comprehensive_feedback():
 
     with col1:
         st.markdown(
-            '<div style="background: linear-gradient(135deg, #e3f2fd, #e8eaf6); '
-            'padding: 16px; border-radius: 12px; border-left: 4px solid #2196f3; margin-bottom: 15px;">'
-            '<h3 style="color: #0d47a1; margin: 0 0 12px 0; font-size: 1.2em;">🌟 전체 강점</h3></div>',
+            '<div style="background-color: #f8f9fa; '
+            'padding: 16px; border-radius: 8px; border-left: 4px solid #0d6efd; margin-bottom: 15px;">'
+            '<h3 style="color: #0a58ca; margin: 0 0 12px 0; font-size: 1.2em;">🌟 전체 강점</h3></div>',
             unsafe_allow_html=True
         )
         overall_strengths = feedback.get("overall_strengths", [])
         for strength in overall_strengths:
             st.markdown(
-                f'<div style="background: linear-gradient(90deg, #f8f9fa, #e3f2fd); '
+                f'<div style="background-color: #f8f9fa; '
                 f'padding: 10px 14px; margin: 6px 0; border-radius: 8px; '
-                f'border-left: 3px solid #2196f3; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">'
-                f'<span style="color: #0d47a1; font-weight: 500;">✨ {strength}</span></div>',
+                f'border-left: 3px solid #0d6efd;">'
+                f'<span style="color: #0a58ca; font-weight: 500;">✨ {strength}</span></div>',
                 unsafe_allow_html=True
             )
 
     with col2:
         st.markdown(
-            '<div style="background: linear-gradient(135deg, #ffe0b2, #ffecb3); '
-            'padding: 16px; border-radius: 12px; border-left: 4px solid #ff9800; margin-bottom: 15px;">'
-            '<h3 style="color: #e65100; margin: 0 0 12px 0; font-size: 1.2em;">📈 우선 개선사항</h3></div>',
+            '<div style="background-color: #f8f9fa; '
+            'padding: 16px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 15px;">'
+            '<h3 style="color: #856404; margin: 0 0 12px 0; font-size: 1.2em;">📈 우선 개선사항</h3></div>',
             unsafe_allow_html=True
         )
         priority_improvements = feedback.get("priority_improvements", [])
         for improvement in priority_improvements:
             st.markdown(
-                f'<div style="background: linear-gradient(90deg, #fff8e1, #ffe0b2); '
+                f'<div style="background-color: #f8f9fa; '
                 f'padding: 10px 14px; margin: 6px 0; border-radius: 8px; '
-                f'border-left: 3px solid #ff9800; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">'
-                f'<span style="color: #e65100; font-weight: 500;">🎯 {improvement}</span></div>',
+                f'border-left: 3px solid #ffc107;">'
+                f'<span style="color: #856404; font-weight: 500;">🎯 {improvement}</span></div>',
                 unsafe_allow_html=True
             )
 
     study_recommendations = feedback.get("study_recommendations", "")
     if study_recommendations:
         st.markdown(
-            '<div style="background: linear-gradient(135deg, #f3e5f5, #e1bee7); '
-            'padding: 20px; border-radius: 15px; margin: 20px 0; '
-            'border-left: 5px solid #9c27b0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">'
-            '<h3 style="color: #4a148c; margin: 0 0 12px 0; font-size: 1.3em;">💡 학습 추천사항</h3>'
-            f'<p style="color: #6a1b9a; line-height: 1.6; margin: 0; font-size: 1.05em;">{study_recommendations}</p>'
+            '<div style="background-color: #f8f9fa; '
+            'padding: 20px; border-radius: 8px; margin: 20px 0; '
+            'border-left: 5px solid #6f42c1;">'
+            '<h3 style="color: #6f42c1; margin: 0 0 12px 0; font-size: 1.3em;">💡 학습 추천사항</h3>'
+            f'<p style="color: #495057; line-height: 1.6; margin: 0; font-size: 1.05em;">{study_recommendations}</p>'
             '</div>',
             unsafe_allow_html=True
         )
