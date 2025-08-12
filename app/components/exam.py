@@ -232,7 +232,33 @@ def _ensure_exam_questions():
 
 
 def show_exam():
+
     st.title("OPIc Buddy")
+    # ========================
+    # 개발자 모드 토글 및 디버그 정보 표시
+    # ========================
+    dev_col, _ = st.columns([2,8])
+    with dev_col:
+        dev_mode = st.toggle('개발자 모드', key='exam_dev_mode', help='survey_data(설문 답변) & exam_questions(생성 질문) 표시')
+    if dev_mode:
+        survey_data = st.session_state.get("survey_data", {})
+        exam_questions = st.session_state.get("exam_questions", [])
+        # survey_data를 context(키)별로 보기 좋게 출력
+        survey_lines = []
+        if isinstance(survey_data, dict):
+            for k, v in survey_data.items():
+                survey_lines.append(f"[{k}] : {v}")
+        else:
+            survey_lines.append(str(survey_data))
+        # exam_questions를 질문별로 줄바꿈해서 출력
+        questions_lines = [f"{i+1}. {q}" for i, q in enumerate(exam_questions)]
+        st.markdown('<div style="background:#f8f9fa;border:1px solid #eee;padding:12px 18px 10px 18px;border-radius:8px;margin-bottom:18px;font-size:0.98rem;">'
+                    '<b>st.session_state.survey_data (설문 답변, context별)</b><br>'
+                    f'<pre style="font-size:0.97rem;">' + '\n'.join(survey_lines) + '</pre>'
+                    '<b>st.session_state.exam_questions (생성된 질문 리스트, 줄바꿈)</b><br>'
+                    f'<pre style="font-size:0.97rem;">' + '\n'.join(questions_lines) + '</pre>'
+                    '</div>', unsafe_allow_html=True)
+
     _ensure_exam_questions()
 
     qs = st.session_state.exam_questions
