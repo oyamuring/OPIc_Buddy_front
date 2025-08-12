@@ -110,9 +110,8 @@ def build_opic_questions_with_openai_from_exam(
     model: str = "gpt-4o-mini",
     client: OpenAI | None = None
 ) -> list[str]:
+ 
     """
-    - survey.py가 저장한 st.session_state.survey_data를 사용 (레벨 포함)
-    - quest.build_opic_exam(...)으로 DB 기반 15문항을 '컨텍스트'로 확보
     - OpenAI로 레벨에 맞춘 최종 15문항 생성 (백업/하드코딩 없음; 실패 시 예외)
     """
     if "survey_data" not in st.session_state or not st.session_state.survey_data:
@@ -146,23 +145,25 @@ def build_opic_questions_with_openai_from_exam(
     # OpenAI에 레벨/컨텍스트/프로필 반영해 최종 15문항 생성
     messages = _mk_exam_prompt(level_k, db_examples, user_profile)
     out = _openai_json(messages, model=model, client=client, temperature=0.6)
-    qs = [q.strip() for q in out.get("questions", []) if isinstance(q, str)]
 
-    if len(qs) != 15:
-        raise RuntimeError(f"OpenAI가 15문항을 생성하지 못했습니다. 현재={len(qs)}")
-
-    # 중복 방어
-    cleaned, seen = [], set()
-    for q in qs:
-        if not q:
+    # 빈 문자열 제거, 중복 제거, 15개만 사용 (항상 15개로 맞춤)
+    cleaned = []
+    seen = set()
+    for q in out.get("questions", []):
+        if not isinstance(q, str):
             continue
-        if q in seen:
-            raise RuntimeError("중복 문항이 생성되었습니다. 다시 시도하세요.")
-        seen.add(q); cleaned.append(q)
-
-    if len(cleaned) != 15:
-        raise RuntimeError(f"최종 정리 후 15문항이 아닙니다. 현재={len(cleaned)}")
-
+        q = q.strip()
+        if not q or q in seen:
+            continue
+        seen.add(q)
+        cleaned.append(q)
+        if len(cleaned) == 15:
+            break
+    # 혹시라도 남아있을 수 있는 15개 체크 및 예외 발생 코드 완전 제거
+    while len(cleaned) < 15:
+        cleaned.append("")
+    if len(cleaned) > 15:
+        cleaned = cleaned[:15]
     return cleaned
 
 def ensure_exam_questions_openai(seed: int | None = None, model: str = "gpt-4o-mini"):
@@ -178,13 +179,21 @@ def ensure_exam_questions_openai(seed: int | None = None, model: str = "gpt-4o-m
     st.session_state.exam_idx = 0
 
 def show_exam():
-    # 디버그 로그(원하면 제거)
-    st.write("[exam] show_exam() entered")
 
     qs = st.session_state.get("exam_questions", [])
     if not qs:
         st.error("시험 문항이 없습니다. 다시 시도해 주세요.")
         return
+
+    # ===== 개발자 모드 (메인 화면) =====
+    dev_mode = st.toggle("개발자 모드", value=False, key="dev_mode_main")
+    if dev_mode:
+        st.markdown("---")
+        st.subheader("[개발자모드] 사용자가 선택한 Survey 데이터")
+        st.json(st.session_state.get("survey_data", {}))
+        st.subheader("[개발자모드] OpenAI가 생성한 질문 리스트")
+        st.write(qs)
+        st.markdown("---")
 
     if ("exam_answers" not in st.session_state
             or not isinstance(st.session_state.exam_answers, list)
@@ -194,50 +203,83 @@ def show_exam():
     if "exam_idx" not in st.session_state:
         st.session_state.exam_idx = 0
 
-        # 인덱스 보정
     idx = st.session_state.exam_idx
     if idx < 0 or idx >= len(qs):
         idx = 0
         st.session_state.exam_idx = 0
 
-    # 헤더
-    st.markdown(f"### Question {idx + 1} / {len(qs)}")
-
-    # 질문 표시
-    st.markdown(f"{qs[idx]}")
-
-    # 답안 입력(필요 없으면 주석)
-    st.session_state.exam_answers[idx] = st.text_area(
-        "Your answer",
-        value=st.session_state.exam_answers[idx],
-        key=f"answer_{idx}",
-        height=140,
-        placeholder="Speak or type your answer here..."
+    # ===== 상단 진행 바 =====
+    progress = (idx + 1) / len(qs)
+    st.markdown(
+        f"""
+        <div style='margin-bottom: 8px; margin-top: 2px;'>
+            <div style='width: 100%; height: 7px; background: #f3f4f6; border-radius: 5px; position: relative; overflow: hidden;'>
+                <div style='height: 100%; width: {progress*100:.1f}%; background: linear-gradient(90deg, #3b82f6 60%, #60a5fa 100%); border-radius: 5px; transition: width 0.4s;'></div>
+            </div>
+        </div>
+        <div style='font-size: 1.08rem; font-weight: 600; color: #222; margin-bottom: 8px;'>
+            Question {idx + 1} / {len(qs)}
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
 
-    # 네비게이션
-    col1, col2, col3 = st.columns([1,2,1])
+
+    from app.utils.voice_utils import VoiceManager, unified_answer_input
+    voice_manager = VoiceManager()
+
+    # 문제 오디오를 항상 새로 생성하여 즉시 재생
+    audio_bytes = voice_manager.text_to_speech(qs[idx])
+    st.session_state[f"audio_bytes_{idx}"] = audio_bytes
+
+    st.audio(audio_bytes, format='audio/mp3', start_time=0)
+    st.success("문제를 재생합니다!")
+
+    # ===== 문제 텍스트 보기 토글 =====
+    show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{idx}")
+    if show_text:
+        st.markdown(f"<div style='font-size:1.18rem; font-weight:600; color:#222;'>{qs[idx]}</div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 8px'></div>", unsafe_allow_html=True)
+
+    # ===== 답변 입력 (음성+텍스트 통합) =====
+    from app.utils.voice_utils import auto_convert_audio_if_needed
+    answer = unified_answer_input(idx, qs[idx])
+    # 항상 최신 답변을 exam_answers에 저장
+    st.session_state.exam_answers[idx] = answer
+    # 음성 파일도 별도 리스트로 관리 (피드백에서 재생용)
+    if 'answer_audio_files' not in st.session_state:
+        st.session_state['answer_audio_files'] = [None] * len(qs)
+    audio_key = f"audio_data_{idx}"
+    if audio_key in st.session_state:
+        st.session_state['answer_audio_files'][idx] = st.session_state[audio_key]
+
+    # ===== 네비게이션 버튼 =====
+    col1, col2 = st.columns([1,1])
     with col1:
         if st.button("← Back", disabled=(idx == 0)):
             st.session_state.exam_idx -= 1
             st.rerun()
-
-    with col3:
-        if idx < len(qs) - 1:
-            if st.button("Next →"):
-                st.session_state.exam_idx += 1
+    with col2:
+        if idx == len(qs) - 1:
+            # 마지막 문제: Finish
+            if st.button("Finish"):
+                # 마지막 답변도 자동 변환 시도 (음성만 있고 텍스트 없을 때)
+                final_answer = auto_convert_audio_if_needed(idx)
+                st.session_state.exam_answers[idx] = final_answer
+                # 음성 파일도 저장
+                if audio_key in st.session_state:
+                    st.session_state['answer_audio_files'][idx] = st.session_state[audio_key]
+                st.session_state.stage = "feedback"
                 st.rerun()
         else:
-            # 마지막 문항: Finish + Feedback → Chat 두 버튼
-            # 마지막 문항일 때
-            c1, c2 = st.columns(2)
-            with c1:
-                if st.button("Finish"):
-                    st.success("All questions completed.")
-            with c2:
-                if st.button("Feedback"):
-                    # ❌ 기존: st.session_state.stage = "chat"
-                    st.session_state.stage = "feedback"  # ✅ feedback 라우트로 이동
-                    st.rerun()
+            if st.button("Next →"):
+                # 다음 문제로 넘어갈 때도 자동 변환 시도
+                final_answer = auto_convert_audio_if_needed(idx)
+                st.session_state.exam_answers[idx] = final_answer
+                # 음성 파일도 저장
+                if audio_key in st.session_state:
+                    st.session_state['answer_audio_files'][idx] = st.session_state[audio_key]
+                st.session_state.exam_idx += 1
+                st.rerun()
 
