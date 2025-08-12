@@ -1,3 +1,57 @@
+# ========================
+# Fixed Info Box (진행 바 바로 아래, 카드형 스타일)
+# ========================
+def render_fixed_info(total_selected: int):
+    st.markdown("""
+    <style>
+    .opic-floating-helper {
+        position: fixed;
+        top: 100px;
+        right: 40px;
+        width: 300px;
+        max-width: 32vw;
+        background: #fff;
+        border: 1px solid rgba(244, 98, 31, 0.22);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+        padding: 18px 20px 16px 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        transition: box-shadow 0.2s;
+    }
+    .opic-floating-helper .title {
+        font-weight: 800;
+        font-size: 1.08rem;
+        color: #f4621f;
+        margin-bottom: 8px;
+    }
+    .opic-floating-helper .desc {
+        font-size: 0.98rem;
+        color: #39424e;
+        line-height: 1.5;
+    }
+    .opic-floating-helper .count {
+        margin-top: 12px;
+        font-weight: 800;
+        color: #2d5a2d;
+        font-size: 1.05rem;
+    }
+    @media (max-width: 1200px) {
+        .opic-floating-helper { display:none; }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="opic-floating-helper">
+        <div class="title">선택 진행 상황</div>
+        <div class="desc">
+            총 <b>12개 이상</b> 선택해야 다음 단계로 이동할 수 있어요.<br>
+        </div>
+        <div class="count">현재 선택: {total_selected}개</div>
+    </div>
+    """, unsafe_allow_html=True)
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
@@ -210,15 +264,22 @@ def show_survey():
     step = st.session_state.survey_step
     total_steps = len(SURVEY_STEPS)
     
+
     # 진행 바 표시
     display_progress_bar(step, total_steps)
-    
+
+    # step5(진행 바) 바로 아래에 안내 박스만 렌더
+    if step == 3:
+        # 반드시 세션 상태 초기화 후 진행 (KeyError 방지)
+        initialize_multi_select_state(step)
+        render_fixed_info(calculate_total_selected(step))
+
     # 타이틀과 설명 표시
     display_title_and_description(step)
-    
+
     # Part 번호 표시
     display_part_number(step, total_steps)
-    
+
     # 설문 질문 처리
     if step == 3:  # 4단계 (다중 선택)
         handle_multiple_choice_step(step, total_steps)
@@ -380,20 +441,20 @@ def handle_multiple_choice_step(step, total_steps):
     
     # 전체 선택된 항목 수 계산
     total_selected = calculate_total_selected(step)
-    
-    # 진행상황 표시
-    display_multi_select_progress(total_selected)
-    
-    # 각 카테고리별 질문 표시
+
+
+    # 안내 박스는 show_survey에서만 렌더링
+
+    # 체크박스들 렌더
     display_leisure_activities(step)
     display_hobbies(step)
     display_sports(step)
     display_travel(step)
-    
+
     # 진행 가능 여부 확인
     can_proceed = check_multi_select_completion(step, total_selected)
     answer = "completed" if can_proceed else None
-    
+
     # 네비게이션 버튼
     display_navigation_buttons(step, total_steps, can_proceed, answer)
 
