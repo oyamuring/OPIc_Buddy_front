@@ -1,41 +1,57 @@
+# main.py
 import streamlit as st
 import os
 from components.intro import show_intro
 from components.survey import show_survey
-from components.exam import show_exam   # ★ 추가
+
 
 def initialize_session_state():
-    # 한 곳에서 전부 초기화
     defaults = {
         "stage": "intro",
-        "survey_data": {"work": {}, "education": {}, "living": "", "activities": {}},
+        "survey_data": {"work": {}, "education": {}, "living": "", "activities": {}, "self_assessment": ""},
         "survey_step": 0,
-        "survey_value_pool": [],   # ★ 여기 추가
-        "user_input": ""           # (옵션) 음성 입력 버퍼
+        "survey_value_pool": [],
+        "user_input": "",
+        # exam 화면에서 저장할 값들
+        "exam_questions": [],
+        "exam_answers": [],
+        "exam_idx": 0,
+        "feedback_payload": None,
     }
     for k, v in defaults.items():
         if k not in st.session_state:
             st.session_state[k] = v
 
 def main():
-    # set_page_config는 가능한 한 가장 먼저 호출
     favicon_path = os.path.join(os.path.dirname(__file__), "opic buddy.png")
-    st.set_page_config(
-        page_title="OPIc Buddy", 
-        page_icon=favicon_path, 
-        layout="centered"
-    )
+    st.set_page_config(page_title="OPIc Buddy", page_icon=favicon_path, layout="centered")
     initialize_session_state()
 
-    if st.session_state.stage == "intro":
+    stage = st.session_state.get("stage", "intro")
+
+    if stage == "intro":
         show_intro()
-    elif st.session_state.stage == "survey":
+
+    elif stage == "survey":
         show_survey()
-    elif st.session_state.stage == "exam":
-        show_exam()
+
+    elif stage == "exam":
+        # exam 모듈은 지연 임포트 (안전)
+        from components import exam as exam_mod
+        # 아직 문제 없으면 한 번만 생성
+        if not st.session_state.get("exam_questions"):
+            with st.spinner("Generating OPIc questions..."):
+                exam_mod.ensure_exam_questions_openai(seed=42, model="gpt-4o-mini")
+        exam_mod.show_exam()
+
+
+    elif stage == "feedback":
+        from components.feedback import show_feedback_page# ★ 새 라우트
+        show_feedback_page()
+
     else:
-        st.error("알 수 없는 스테이지입니다.")
+        st.session_state.stage = "intro"
+        show_intro()
 
 if __name__ == "__main__":
     main()
-

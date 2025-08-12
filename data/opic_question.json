@@ -4,33 +4,18 @@
       "Tell me about your job. What kind of work did you do, and what were your main responsibilities?",
       "Can you describe a memorable project or work experience you had? Please give me some details.",
       "Have you ever faced a difficult problem at work? Tell me about the situation and how you handled it",
-      "What do you consider your greatest achievement in your career? How did you accomplish it?",
       "Have you ever made a mistake at work? What did you learn from it, and how did you overcome it?",
-      "What was your role at your previous job, and how did you contribute to your team?",
       "How were your relationships with your boss or coworkers? Tell me about a time you had a conflict and how you resolved it.",
-      "What did you find most satisfying and most challenging about your previous job?",
-      "What did you do to improve your work efficiency? Can you give me a specific example?",
-      "How do you think your past work experience has influenced you today?"
+      "What did you do to improve your work efficiency? Can you give me a specific example?"
     ],
     "living alone in a house/apartment": [
       "What is the biggest challenge of living alone?",
-      "Tell me about the best part of having your own place.",
       "How do you handle household repairs and maintenance on your own?",
       "How do you manage your budget and finances for groceries and other household expenses?",
-      "Tell me about a time you had to deal with a difficult landlord or a maintenance issue.",
-      "What kind of security measures have you taken to feel safe while living alone?",
-      "Describe a memorable get-together or dinner party you hosted at your place.",
       "How do you personalize your living space to make it feel more like your own?",
       "What are your usual routines on a typical weekday evening when you are home alone?",
       "Tell me about the biggest change in your lifestyle since you started living alone.",
-      "Do you ever feel lonely? How do you cope with feelings of solitude?",
-      "What's one thing you miss about living with others, and what's one thing you love about living alone?",
-      "How do you handle unexpected situations or emergencies when you're by yourself?",
-      "What kind of hobbies or activities do you enjoy doing alone in your home?",
-      "Describe your ideal day at home, from morning to night.",
-      "How do you decide what to do for meals? Do you cook a lot, or order in?",
-      "What are some of the rules or habits you've developed for yourself since living alone?",
-      "Have you ever considered getting a roommate? Why or why not?"
+      "How do you handle unexpected situations or emergencies when you're by yourself?"
     ],
     "living with friends in a house/apartment": [
       "I'd like to know about your best friend. Who is she or he? What does she or he look like? Describe your best friend in as much detail as you can.",
@@ -38,19 +23,11 @@
       "Tell me about the best part of living with your friends. What makes it so enjoyable?",
       "How do you and your roommates handle disagreements or conflicts?",
       "Describe a memorable experience you had with your roommates.",
-      "How do you split up household chores and expenses?",
       "What are some of the rules or boundaries you have with your friends?",
-      "Have you ever had to find a new roommate? What was that experience like?",
-      "What do you do together for fun? Describe a typical weekend with your friends.",
       "How do you balance your personal space with the communal living area?",
       "Tell me about a challenge you faced while living with friends and how you resolved it.",
       "What are some of the best memories you have of living with your friends?",
-      "Do you find it difficult to maintain a clean living space with friends? How do you handle it?",
-      "How do you support each other during difficult times?",
-      "Tell me about a time you had to make a big decision together with your friends about your living situation.",
-      "What kind of shared hobbies or interests do you and your friends have?",
-      "How do you manage visitors and guests at your place?",
-      "What's the most important piece of advice you would give to someone considering living with friends?"
+      "Tell me about a time you had to make a big decision together with your friends about your living situation."
     ],
     "living with family in a house/apartment": [
       "Tell me about all the household chores you are in charge of. What are they? How do you carry out your responsibility?",
@@ -58,19 +35,7 @@
       "How do you handle disagreements with family members?",
       "Describe a typical family dinner. What do you usually talk about?",
       "What are some of the family traditions that are important to you?",
-      "How do you balance your personal life with family obligations?",
-      "Tell me about a memorable family vacation you've been on.",
-      "What is something you and your family enjoy doing together?",
-      "Do you have a pet? Tell me about your family's relationship with your pet.",
-      "What has living with your family taught you?",
-      "How do you contribute to the family beyond household chores?",
-      "What's the most challenging part of living with your family?",
-      "How do you find personal time and space when living with family?",
-      "Tell me about a time your family helped you with a problem you were facing.",
-      "Describe your family's favorite holiday tradition.",
-      "How has living with your family influenced your values or perspective on life?",
-      "What kind of advice do your family members give you?",
-      "Tell me about a time when you and your family had a big celebration together."
+      "How do you balance your personal life with family obligations?"
     ],
     "dormitory": [
       "What's a typical day like in your dorm?",
@@ -83,7 +48,6 @@
       "Describe the communal areas in your dorm. What do they look like and what are they used for?",
       "How do you handle studying when there are distractions in the dorm?",
       "What's your favorite meal from the dorm cafeteria or a nearby eatery?",
-      "Tell me about a memorable prank or funny moment in your dorm.",
       "What advice would you give to someone who is about to move into a dorm for the first time?",
       "How do you personalize your dorm room to make it feel more like your own space?",
       "How do you and your roommate handle guests coming over?",
@@ -870,9 +834,7 @@
       "How do you feel when you see your investments grow over time?",
       "Tell me about a time you had to make a quick decision about an investment.",
       "Do you think it's important for everyone to start investing early? Why or why not?",
-      "What is the most common mistake you see beginners make when they start investing?",
-      "Describe a time you were surprised by the performance of an investment.",
-      "How do you think investing has changed with the rise of technology and new apps?"
+      "What is the most common mistake you see beginners make when they start investing?"
     ],
     "travel magazine": [
       "Do you read travel magazines? Which one is your favorite, and what kind of articles or photos do you enjoy most?",
@@ -909,9 +871,6 @@
       "What's the best piece of advice you've received about singing?",
       "How do you feel when you hit a difficult note in a song perfectly?",
       "Tell me about a time you were surprised by someone's singing ability.",
-      "Do you think anyone can learn how to sing well, or is it a natural talent?",
-      "What is the most important quality in a good singer?",
-      "Describe a time you wrote a song or lyrics yourself.",
       "How do you feel when you listen to your favorite singer's voice?"
     ],
     "basketball": [
@@ -931,8 +890,7 @@
       "Tell me about a time you saw a spectacular play in a basketball game.",
       "Do you think basketball is a good sport for all ages? Why or why not?",
       "What is the most important skill to have in basketball?",
-      "Describe a time you were surprised by the outcome of a basketball game.",
-      "What's the biggest difference between a pick-up game and a structured game?"
+      "Describe a time you were surprised by the outcome of a basketball game."
     ],
     "baseball/softball": [
       "Do you play baseball or softball? How often do you play, and what do you like most about the game?",
@@ -1207,12 +1165,7 @@
       "Tell me about a time you fell while ice skating. What happened, and did you get hurt?",
       "How do you think ice skating has helped you in other aspects of your life?",
       "What's the best piece of advice you've received about ice skating?",
-      "How do you feel after you've finished a long ice skating session?",
-      "Tell me about a time you saw a professional ice skating show. What was it like?",
-      "Do you think ice skating is a good activity for all ages? Why or why not?",
-      "What is the most important skill to have in ice skating?",
-      "Describe a time you tried a new skating move or trick.",
-      "What's the biggest difference between ice skating and roller skating?"
+      "How do you feel after you've finished a long ice skating session?"
     ],
     "jogging": [
       "How often do you go jogging? Where do you usually go, and what do you like most about it?",
@@ -1246,13 +1199,7 @@
       "Do you prefer to walk in the morning, afternoon, or evening? Why?",
       "Tell me about a time you had to deal with bad weather while on a walk.",
       "How do you think walking has helped you in other aspects of your life?",
-      "What's the best piece of advice you've received about walking?",
-      "How do you feel when you've reached a new personal best in your walking distance?",
-      "Tell me about a time you walked to a new part of your city and discovered something new.",
-      "Do you think walking is a good way to stay healthy? Why or why not?",
-      "What is the most important thing you wear or use when you go for a walk?",
-      "Describe a time you went on a long, scenic walk.",
-      "What's the biggest difference between walking for a purpose and walking for pleasure?"
+      "Do you think walking is a good way to stay healthy? Why or why not?"
     ],
     "yoga": [
       "How often do you do yoga? Where do you usually do it, and what do you like most about it?",
@@ -1263,15 +1210,12 @@
       "Tell me about a time you did a particularly difficult yoga pose for the first time.",
       "What's the most difficult part of yoga for you? Is it a physical pose, or the mental aspect?",
       "Describe the atmosphere of your favorite yoga studio. What does it look and feel like?",
-      "Do you prefer a fast-paced yoga class or a slow, restorative one? Why?",
       "Tell me about a time you had to deal with an injury or pain while doing yoga.",
       "How do you think yoga has helped you in other aspects of your life?",
       "What's the best piece of advice you've received about yoga?",
       "How do you feel when you've reached a new level of flexibility in a pose?",
       "Tell me about a time you did yoga in a beautiful, natural setting, like a park or on the beach.",
       "Do you think yoga is a good way to stay healthy? Why or why not?",
-      "What is the most important thing you wear or use when you do yoga?",
-      "Describe a time you taught a friend or a family member a few yoga poses.",
       "What's the biggest difference between yoga and other forms of exercise?"
     ],
     "hiking/trekking": [
@@ -1331,8 +1275,7 @@
       "Tell me about a time you performed a Taekwondo demonstration in front of an audience.",
       "Do you think Taekwondo is a good way to stay healthy and disciplined? Why or why not?",
       "What is the most important quality in a good Taekwondo master?",
-      "Describe a time you were surprised by someone's skill in Taekwondo.",
-      "What's the biggest difference between practicing Taekwondo as a child and as an adult?"
+      "Describe a time you were surprised by someone's skill in Taekwondo."
     ],
     "taking fitness classes": [
       "What kind of fitness classes do you take? How often do you take them, and what do you like about the classes?",
@@ -1343,16 +1286,12 @@
       "Tell me about a time you took a fitness class with a friend. What was that experience like?",
       "What's the most difficult part of taking a fitness class for you?",
       "Describe the atmosphere of your favorite fitness class. What does it look and sound like?",
-      "Do you prefer a high-intensity class or a more low-impact class? Why?",
       "Tell me about a time you had to deal with an injury or pain during a fitness class.",
       "How do you think taking fitness classes has helped you in other aspects of your life?",
       "What's the best piece of advice you've received about fitness classes?",
-      "How do you feel when you've reached a new personal best in a fitness class?",
       "Tell me about a time you took a fitness class for the first time that you were nervous about.",
       "Do you think taking fitness classes is a good way to stay healthy? Why or why not?",
-      "What is the most important quality in a good fitness instructor?",
-      "Describe a time you were surprised by the difficulty of a fitness class.",
-      "What's the biggest difference between a fitness class and a one-on-one personal training session?"
+      "What is the most important quality in a good fitness instructor?"
     ],
     "do not exercise": [
       "Tell me about why you don't exercise. Is it because of a lack of time, motivation, or something else?",
@@ -1366,13 +1305,7 @@
       "Describe a time you were advised to start exercising by a doctor or a friend.",
       "Do you think exercising is important for your mental health? Why or why not?",
       "How do you think your life would change if you started exercising regularly?",
-      "What's the best piece of advice you've received about exercising, even if you haven't followed it?",
-      "How do you feel when you see other people exercising?",
-      "Tell me about a time you were a very active person. What was that like?",
-      "Do you think there are other ways to stay healthy besides exercising? If so, what are they?",
-      "What is the most common reason you hear from other people who don't exercise?",
-      "Describe a time you had to do a physical activity that you were not used to.",
-      "How do you feel about the pressure to be physically fit in today's society?"
+      "What's the best piece of advice you've received about exercising, even if you haven't followed it?"
     ],
     "domestic business trip": [
       "Tell me about your last domestic business trip. Where did you go, what was the purpose of your trip, and what did you do?",
@@ -1431,8 +1364,7 @@
       "Tell me about a time you rediscovered a part of your city you hadn't been to in a long time.",
       "Do you think staycations are a good way to relax and recharge? Why or why not?",
       "What is the most important thing you do to make your staycation feel special?",
-      "Describe a time you had a very relaxing staycation.",
-      "What's the biggest difference between a staycation and a vacation?"
+      "Describe a time you had a very relaxing staycation."
     ],
     "domestic travel": [
       "Tell me about the last time you traveled domestically. Where did you go, and what did you do there?",
@@ -1448,7 +1380,6 @@
       "How do you feel after you've had a domestic trip?",
       "What's the best piece of advice you've received about domestic travel?",
       "How do you feel when you're in a new city within your own country?",
-      "Tell me about a time you discovered a hidden gem during a domestic trip.",
       "Do you think domestic travel is a good way to explore your own culture? Why or why not?",
       "What is the most important thing you pack for a domestic trip?",
       "Describe a time you had a very relaxing domestic trip.",
@@ -1468,11 +1399,9 @@
       "How do you feel after you've had an international trip?",
       "What's the best piece of advice you've received about international travel?",
       "How do you feel when you're in a new country for the first time?",
-      "Tell me about a time you discovered a hidden gem during an international trip.",
       "Do you think international travel is a good way to learn about the world? Why or why not?",
       "What is the most important thing you pack for an international trip?",
-      "Describe a time you had a very adventurous international trip.",
-      "What's the biggest difference between a planned international trip and an impulsive one?"
+      "Describe a time you had a very adventurous international trip."
     ],
     "newspaper": [
       "How often do you read the newspaper? Do you prefer a physical paper or an online version, and what sections do you usually read?",
@@ -1485,14 +1414,7 @@
       "Describe the atmosphere of a cafe or a public space where people are reading newspapers.",
       "Do you think newspapers are still relevant in today's digital age? Why or why not?",
       "Tell me about a time you talked with a friend or a family member about an article you read in the newspaper.",
-      "How do you think newspapers have changed over the last 10 years?",
-      "What's the best piece of advice you've received about staying informed?",
-      "How do you feel when you read a newspaper article that challenges your own beliefs?",
-      "Tell me about a time you read a newspaper article that was very inspiring to you.",
-      "Do you think it's important to support local newspapers? Why or why not?",
-      "What is the most common section you see people reading in the newspaper?",
-      "Describe a time you had to use a newspaper for a project or for school.",
-      "What's the biggest difference between a newspaper and a magazine?"
+      "Tell me about a time you read a newspaper article that was very inspiring to you."
     ],
     "taking photos": [
       "How often do you take photos? What do you usually take pictures of, and do you use a smartphone or a dedicated camera?",
@@ -1503,16 +1425,9 @@
       "Tell me about a time you had to take a photo of something for a special occasion.",
       "What's the most difficult part of taking a photo for you?",
       "Describe the feeling of looking back at old photos you've taken.",
-      "Do you prefer to take photos of people or of landscapes? Why?",
-      "Tell me about a time you were surprised by how a photo turned out.",
       "Do you think taking photos is a good way to preserve memories? Why or why not?",
-      "What's the best piece of advice you've received about taking photos?",
-      "How do you feel when you see a beautiful photo that someone else took?",
       "Tell me about a time you took a photo that you think perfectly captures a moment.",
-      "Do you think anyone can be a good photographer with enough practice? Why or why not?",
-      "What is the most important tool you use for editing photos?",
-      "Describe a time you took a photo that became a great conversation starter.",
-      "What's the biggest difference between taking a photo and drawing a picture?"
+      "Do you think anyone can be a good photographer with enough practice? Why or why not?"
     ]
   },
   "role_play": {
