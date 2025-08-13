@@ -798,6 +798,13 @@
       "Describe a time you had to cook a meal with a very limited amount of ingredients.",
       "How do you think cooking has changed the way you think about food?"
     ],
+    "pets": [
+      "What kind of pet do you currently have? Tell me about your pet, and what's one thing you love most about having them in your life?",
+      "What is your favorite type of pet? Why do you like them, and what would you recommend to someone thinking about getting that kind of pet?",
+      "Tell me about a valuable lesson you've learned from owning a pet. What was it, and how did it affect you?",
+      "If you could give one piece of advice to a first-time pet owner, what would it be?",
+      "What's your most memorable story or moment with a pet you've had?"
+    ],
     "reading": [
       "What are you currently reading? Tell me about the book, and what do you like about it so far?",
       "What is your favorite genre of books? Why do you like it, and can you recommend a book in that genre?",
