@@ -93,8 +93,11 @@ def _mk_exam_prompt(level_k: int, db_examples: list[str], user_profile: str | No
             "Avoid yes/no-only prompts; elicit responses appropriate to the level.",
             "No duplicates. No references to the prompt/context/system.",
             "Keep questions realistic for OPIc.",
-            "Return JSON only with the key 'questions' (array of strings)."  # ★ JSON 명시
+            "Return JSON only with the key 'questions' (array of strings)."
+            "For questions 2-10, you MUST create questions based on the provided `survey_keywords`. Use as many keywords as possible from the list.",
+            "The `context_examples_from_db` are for reference on style, not content."
         ],
+        "survey_keywords": db_examples,
         "context_examples_from_db": db_examples[:30],
         "user_profile_hint": user_profile or "",
         "output_format_note": "Respond in JSON like: {\"questions\":[\"...\", \"...\"]}"  # ★ JSON 명시
