@@ -594,18 +594,15 @@ def handle_self_assessment_step(step, total_steps):
     for level_info in SELF_ASSESSMENT_LEVELS:
         level_options.append(f"레벨 {level_info['level']}")
     
-    selected_level = st.radio(
-        "본인의 영어 말하기 능력 수준을 선택하세요:",
-        level_options,
-        key=f"self_assessment_{step}",
-        index=None
-    )
-    
-    # 선택된 레벨에 대한 상세 설명 표시
+    # 선택된 레벨에 대한 상세 설명을 라디오 버튼 위에 표시
+    selected_level = None
+    level_num = None
+    level_info = None
+    if 'self_assessment_' + str(step) in st.session_state:
+        selected_level = st.session_state['self_assessment_' + str(step)]
     if selected_level:
         level_num = int(selected_level.split()[-1])  # "레벨 1" -> 1
         level_info = SELF_ASSESSMENT_LEVELS[level_num - 1]
-        
         st.markdown(f"""
         <div style="background:#f8f9fa; border-left: 4px solid #f4621f; padding: 16px; margin: 16px 0; border-radius: 0 8px 8px 0;">
             <div style="font-size:1.1rem; font-weight:600; color:#f4621f; margin-bottom: 8px;">
@@ -616,6 +613,12 @@ def handle_self_assessment_step(step, total_steps):
             </div>
         </div>
         """, unsafe_allow_html=True)
+    selected_level = st.radio(
+        "본인의 영어 말하기 능력 수준을 선택하세요:",
+        level_options,
+        key=f"self_assessment_{step}",
+        index=None
+    )
     
     # 진행 가능 여부 확인
     can_proceed = selected_level is not None
