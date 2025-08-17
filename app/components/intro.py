@@ -22,39 +22,36 @@ def show_intro():
     </div>
     """, unsafe_allow_html=True)
 
-    # Ava 이미지 + 설명
-    _display_ava_image()
+    # chacha 이미지 + 설명
+    _display_chacha_image()
     
     # 시작 버튼
     _display_start_button()
 
-def _display_ava_image():
-    """Ava 이미지를 표시합니다."""
-    ava_path = Path(__file__).parent.parent / "ava.png"
-    
-    if ava_path.exists():
-        with open(ava_path, "rb") as img_file:
+def _display_chacha_image():
+    """chacha 이미지를 표시합니다."""
+    chacha_path = Path(__file__).parent.parent / "chacha.png"
+    if chacha_path.exists():
+        with open(chacha_path, "rb") as img_file:
             img_base64 = base64.b64encode(img_file.read()).decode("utf-8")
-        
         st.markdown(
             f"""
             <div style='display: flex; flex-direction: column; align-items: center; justify-content: center;'>
-                <img src="data:image/png;base64,{img_base64}" alt="Ava" style="width: 228px;"/>
+                <img src="data:image/png;base64,{img_base64}" alt="chacha" style="width: 228px;"/>
             </div>
             """,
             unsafe_allow_html=True
         )
-        
         st.markdown(
             """
             <div style='font-size: 1.35rem; font-weight: 600; color: #222; text-align: center; margin-top: 18px; margin-bottom: 40px;'>
-            본 인터뷰 평가의 진행자는 Ava입니다.
+            본 인터뷰 평가의 진행자는 chacha입니다.
             </div>
             """,
             unsafe_allow_html=True
         )
     else:
-        st.warning("Ava 이미지를 찾을 수 없습니다.")
+        st.warning("chacha 이미지를 찾을 수 없습니다.")
 
 def _display_start_button():
     """시작 버튼을 표시합니다."""

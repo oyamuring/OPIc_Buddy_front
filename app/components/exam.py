@@ -236,8 +236,29 @@ def show_exam():
     audio_bytes = voice_manager.text_to_speech(qs[idx])
     st.session_state[f"audio_bytes_{idx}"] = audio_bytes
 
-    st.audio(audio_bytes, format='audio/mp3', start_time=0)
-    st.success("문제를 재생합니다!")
+
+
+    # ===== 문제듣기(음성 재생) 버튼 및 chacha.gif 제어 =====
+    play_key = f"play_audio_{idx}"
+    if play_key not in st.session_state:
+        st.session_state[play_key] = False
+
+    col_audio, col_gif = st.columns([2, 1])
+    with col_audio:
+        if st.button("🔊 문제 듣기", key=f"audio_btn_{idx}"):
+            st.session_state[play_key] = True
+    import random
+    if st.session_state[play_key]:
+        st.audio(audio_bytes, format='audio/mp3', start_time=0)
+        st.success("문제를 재생합니다!")
+        with col_gif:
+            st.markdown("<div style='height: 10px'></div>", unsafe_allow_html=True)
+            gif_url = f"app/chacha.gif?t={random.randint(1, 1_000_000)}"
+            st.markdown(f"<img src='{gif_url}' width='228' style='display:block;margin:auto;' />", unsafe_allow_html=True)
+            st.markdown("<div style='height: 10px'></div>", unsafe_allow_html=True)
+    else:
+        with col_gif:
+            st.markdown("<div style='height: 48px'></div>", unsafe_allow_html=True)
 
     # ===== 문제 텍스트 보기 토글 =====
     show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{idx}")
