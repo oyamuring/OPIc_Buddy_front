@@ -81,6 +81,8 @@ def _display_start_button():
     with col2:
         st.markdown('<div class="intro-button-container">', unsafe_allow_html=True)
         if st.button("next", key="start_button", help="opic 모의고사 시작", use_container_width=True):
+            if "stage" not in st.session_state:
+                st.session_state.stage = "intro"
             st.session_state.stage = "survey"
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
