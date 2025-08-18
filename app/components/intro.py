@@ -17,10 +17,7 @@ def show_intro():
     st.markdown("""
     <div class="block-welcome" style='text-align: center;'>
         <h2 class="opic-header">
-            <span class="opic-header-en" style='color:#36f; font-weight:bold;'>
-                🔊 <span class="opic-header-en-desktop">Oral Proficiency Interview - computer (OPIc)</span>
-                <span class="opic-header-en-mobile">Oral Proficiency Interview<br>- computer (OPIc)</span>
-            </span>
+                 <span class="🔊 opic-header-en-desktop">Oral Proficiency Interview - computer (OPIc)</span>
         </h2>
         <p style="font-size:1.25rem; font-weight:bold;">지금부터 <span style='color:#f4621f; font-weight:bold;'>English 말하기 평가</span>를 시작하겠습니다.</p>
     </div>
