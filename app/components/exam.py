@@ -155,6 +155,8 @@ def _gif_to_base64_html(gif_path: str, width: int | None = None) -> str:
 # Streamlit Page
 # ========================
 def show_exam():
+    if "stage" not in st.session_state:
+        st.session_state.stage = "intro"
     # 세션 준비
     if "exam_questions" not in st.session_state or not st.session_state["exam_questions"]:
         # 최초 진입 시 비동기 생성

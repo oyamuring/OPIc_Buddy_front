@@ -7,6 +7,8 @@ from pathlib import Path
 from utils.styles import apply_intro_styles
 
 def show_intro():
+    if "stage" not in st.session_state:
+        st.session_state.stage = "intro"
     """인트로 화면을 표시합니다."""
     # 스타일 적용
     apply_intro_styles()

@@ -268,6 +268,8 @@ TRAVEL_MAPPING = dict(zip(TRAVEL, TRAVEL_EN))
 # ========================
 
 def show_survey():
+    if "stage" not in st.session_state:
+        st.session_state.stage = "intro"
     """설문조사 화면을 표시합니다."""
     # 스타일 적용
     apply_survey_styles()
