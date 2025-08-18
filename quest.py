@@ -1,179 +1,160 @@
-# quest.py
 import os
 import json
-import random
+import asyncio
 from typing import List, Dict, Any, Optional
-from db.db import connect_db  # ← 기존에 쓰던 헬퍼 (컬렉션 핸들 반환)
+from openai import OpenAI
+from db.db import connect_db
 
-# 기본 경로
+# 기본 경로 설정
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 DEFAULT_MAP_PATH = os.path.join(DATA_DIR, "survey_topic_map.json")
 
-# =========================
-# 유틸
-# =========================
-def _load_json_safe(path: str) -> Optional[Dict[str, Any]]:
+# opic_question.json 파일의 경로를 설정합니다.
+OPIC_DATA_PATH = os.path.join(os.path.dirname(__file__), "opic_question.json")
+
+# 안전하게 JSON 파일 로드
+def load_json_safe(path: str) -> Optional[Dict[str, Any]]:
+    """
+    Loads a JSON file safely from the given path.
+    Returns the loaded dictionary or None if an error occurs.
+    """
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
-    except Exception:
+    except (FileNotFoundError, json.JSONDecodeError):
         return None
 
+# opic_data 변수를 opic_question.json 파일에서 로드하여 선언합니다.
+# 파일이 없거나 오류가 발생하면 빈 딕셔너리를 사용합니다.
+opic_data = load_json_safe(OPIC_DATA_PATH) or {}
+
+# 키 정규화 유틸리티 함수
 def _normalize_key(s: str) -> str:
+    """
+    Normalizes a string key by stripping whitespace and converting to lowercase.
+    """
     return s.strip().lower()
 
-def _pick_distinct(items: List[str], n: int, rng: random.Random) -> List[str]:
-    """중복 제거 후 섞어서 n개 추출"""
-    items = list(dict.fromkeys(items))
-    rng.shuffle(items)
-    return items[: min(n, len(items))]
 
-def _cycle_pick(items: List[str], n: int) -> List[str]:
-    """items 길이가 n보다 작아도 순환하면서 n개 채움 (설문 토픽이 1~2개만 있을 때 대응)"""
-    if not items:
-        return []
-    out = []
-    i = 0
-    while len(out) < n:
-        out.append(items[i % len(items)])
-        i += 1
-    return out
-
-# =========================
-# 데이터 로더
-# =========================
-def _load_survey_map(map_path: str = DEFAULT_MAP_PATH) -> Dict[str, str]:
-    """원문(한글 등) → 영문 토픽 문자열 매핑"""
-    obj = _load_json_safe(map_path) or {}
-    # 문자열 안전 변환
+# 설문조사 항목과 DB 토픽 매핑 로드
+def load_survey_map(map_path: str = DEFAULT_MAP_PATH) -> Dict[str, str]:
+    """
+    Loads the survey topic mapping from a JSON file.
+    Returns a dictionary mapping survey topics to database topics.
+    """
+    obj = load_json_safe(map_path)
+    if obj is None:
+        return {}
+    # Ensures keys and values are strings
     return {str(k): str(v) for k, v in obj.items()}
 
-# =========================
-# DB 질의
-# =========================
-def _fetch_survey_pool(col, topic: str) -> List[str]:
-    """
-    category='survey' & topic='<topic>' 문서들의 content를 합쳐 질문 풀을 만든다.
-    """
-    cursor = col.find({"category": "survey", "topic": topic}, {"content": 1})
-    pool: List[str] = []
-    for doc in cursor:
-        if isinstance(doc.get("content"), list):
-            pool.extend([str(x) for x in doc["content"] if isinstance(x, str)])
-    if not pool:
-        raise RuntimeError(f"[DB] survey pool empty for topic='{topic}'")
-    # 중복 제거(원문 순서 유지)
-    pool = list(dict.fromkeys(pool))
-    return pool
 
-def _fetch_category_pool(col, category: str) -> List[str]:
-    """
-    category='role-play' 또는 'random_question' 풀을 전부 합친다.
-    topic 필드는 없을 수도/있을 수도 있다고 가정.
-    """
-    cursor = col.find({"category": category}, {"content": 1})
-    pool: List[str] = []
-    for doc in cursor:
-        if isinstance(doc.get("content"), list):
-            pool.extend([str(x) for x in doc["content"] if isinstance(x, str)])
-    if not pool:
-        raise RuntimeError(f"[DB] pool empty for category='{category}'")
-    pool = list(dict.fromkeys(pool))
-    return pool
+# MongoDB에서 서베이 질문 가져오기
+async def get_questions_from_db(survey_topic: str) -> List[str]:
+    # connect_db is a synchronous function, so await is not needed.
+    db_collection = connect_db('opic_samples')
 
-def _sample_n(pool: List[str], n: int, rng: random.Random) -> List[str]:
-    """풀에서 중복 없이 n개 샘플링. 개수가 부족하면 섞은 뒤 앞에서 n개 자름(중복 없이 최대치까지)."""
-    if not pool:
+    if db_collection is None:
         return []
-    if len(pool) <= n:
-        pool_copy = pool[:]
-        rng.shuffle(pool_copy)
-        return pool_copy
-    # len(pool) > n
-    return rng.sample(pool, n)
 
-# =========================
-# 공개 API
-# =========================
-def build_opic_exam(
-    survey_answers: List[str],
-    seed: Optional[int] = None,
-    map_path: str = DEFAULT_MAP_PATH,
-    mongo_collection: str = "opic_samples",
-) -> List[str]:
+    normalized_topic = _normalize_key(survey_topic)
+
+    # Use find_one to query the database for the topic.
+    # We are assuming the documents are structured with 'topic' as a field.
+    document = db_collection.find_one({"topic": normalized_topic, "category": "survey"})
+
+    if document:
+        # The questions are stored in a key called 'content' within the document.
+        return document.get("content", [])
+
+    return []
+
+# MongoDB에서 롤플레이 질문 가져오기
+async def get_role_play_questions_from_db(role_play_topic: str) -> List[str]:
+    db = connect_db('opic_samples')
+
+    normalized_topic = _normalize_key(role_play_topic)
+
+    if normalized_topic in opic_data.get('role_play', {}):
+        return opic_data['role_play'][normalized_topic]
+
+    return []
+
+# MongoDB에서 돌발질문 가져오기
+async def get_random_questions_from_db(random_topic: str) -> List[str]:
+    db = connect_db("opic_samples")
+
+    normalized_topic = _normalize_key(random_topic)
+
+    if normalized_topic in opic_data.get('random_question', {}):
+        return opic_data['random_question'][normalized_topic]
+
+    return []
+
+# OpenAI API를 이용해 추가 질문 생성
+def generate_openai_questions(prompt: str, questions_needed: int = 3) -> List[str]:
+    # ... 기존 코드와 동일 ...
+    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",  # Use an appropriate model
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant for generating language test questions."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=150,
+            n=1,
+            stop=None,
+            temperature=0.7,
+        )
+        questions_text = response.choices[0].message.content.strip()
+        questions_list = [q.strip() for q in questions_text.split('\n') if q.strip()]
+        return questions_list[:questions_needed]
+    except Exception as e:
+        print(f"An error occurred with the OpenAI API: {e}")
+        return []
+
+
+# 메인 함수: 질문 목록 생성
+async def make_questions(topic: str, category: str, level: str, count: int) -> List[str]:
     """
-    설문 응답(한글 선택지 등)을 받아 OPIc 15문항을 생성 (DB 전용).
+    Combines questions from the database with AI-generated questions to a specified total count.
 
-    시퀀스:
-      1) 자기소개 1문항
-      2~4) 설문 토픽 A에 대한 3문항
-      5~7) 설문 토픽 B에 대한 3문항
-      8~10) 설문 토픽 C에 대한 3문항
-      11~13) role-play 3문항
-      14~15) random_question 2문항
+    Args:
+        topic: The topic chosen for the questions.
+        category: The category of the questions ('survey', 'role_play', 'random_question').
+        level: The user's proficiency level (e.g., 'beginner', 'intermediate', 'advanced').
+        count: The total number of questions to generate.
 
-    가정:
-      - opic_samples 스키마: {category, topic?, content: [str, ...]}
-      - category in {"survey","role-play","random_question"}
-      - survey_topic_map.json으로 설문 응답 문자열 → 영문 topic 매핑이 항상 가능
-      - 각 풀에 충분한 질문이 존재 (백업/하드코딩 없음)
+    Returns:
+        A final list of questions for the user.
     """
-    rng = random.Random(seed)
+    db_questions = []
 
-    # 1) 설문 -> 토픽 매핑
-    keymap = _load_survey_map(map_path)  # 원문 -> 영문 토픽
-    mapped_topics: List[str] = []
-    for ans in survey_answers:
-        # 설문 원문 그대로 매칭(대소문자/공백 차이 최소화)
-        if ans in keymap:
-            mapped_topics.append(keymap[ans])
-        else:
-            # 혹시나 소문자 normalize 필요 시(키맵이 원문 그대로라면 통상 필요 없음)
-            # 역매핑 시도: normalize로 비교
-            for k, v in keymap.items():
-                if _normalize_key(k) == _normalize_key(ans):
-                    mapped_topics.append(v)
-                    break
+    # 1. Get questions from the database based on the category and topic
+    if category == 'survey':
+        db_questions = await get_questions_from_db(topic)
+    elif category == 'role_play':
+        db_questions = await get_role_play_questions_from_db(topic)
+    elif category == 'random_question':
+        db_questions = await get_random_questions_from_db(topic)
 
-    mapped_topics = list(dict.fromkeys([t for t in mapped_topics if t]))  # 중복 제거
+    # 2. Determine how many more questions are needed
+    questions_needed = max(0, count - len(db_questions))
 
-    if not mapped_topics:
-        raise RuntimeError("설문 응답에서 매핑된 토픽이 없습니다. survey_topic_map.json을 확인하세요.")
+    # 3. Generate additional questions if needed
+    openai_questions = []
+    if questions_needed > 0:
+        prompt = (
+            f"Generate {questions_needed} additional OPIC-style questions about the topic '{topic}' "
+            f"in the category '{category}'. "
+            f"The questions should be appropriate for a speaker at an {level} level. "
+            f"Make sure they are open-ended and require detailed answers."
+        )
+        openai_questions = generate_openai_questions(prompt, questions_needed)
 
-    # 설문 토픽 3개 선택(설문이 1~2개여도 순환해서 3개 채움)
-    chosen_topics = _pick_distinct(mapped_topics, 3, rng)
-    if len(chosen_topics) < 3:
-        chosen_topics = _cycle_pick(chosen_topics or mapped_topics, 3)
+    # 4. Combine and return the questions, ensuring the total count is respected
+    final_questions = db_questions + openai_questions
 
-    # 2) DB 연결
-    col = connect_db(mongo_collection)
-
-    # 3) 질문 구성
-    questions: List[str] = []
-
-    # (1) 자기소개
-    questions.append(
-        "Please introduce yourself. Include your name, where you live, what you do, and a few hobbies or interests."
-    )
-
-    # (2~10) 설문 토픽 3개 × 각 3문항
-    for topic in chosen_topics:
-        pool = _fetch_survey_pool(col, topic)
-        questions.extend(_sample_n(pool, 3, rng))
-
-    # (11~13) role-play 3문항 (토픽 무관, 카테고리 풀에서 랜덤)
-    rp_pool = _fetch_category_pool(col, "role_play")
-    questions.extend(_sample_n(rp_pool, 3, rng))
-
-    # (14~15) random_question 2문항
-    rq_pool = _fetch_category_pool(col, "random_question")
-    questions.extend(_sample_n(rq_pool, 2, rng))
-
-    # 최종 길이 보장(정확히 15)
-    if len(questions) != 15:
-        # DB 상태나 샘플 수가 과/부족일 경우를 대비해 정확히 자르거나(>15) 보완(<15)
-        questions = questions[:15]
-        if len(questions) < 15:
-            raise RuntimeError(f"최종 문항이 15개가 아닙니다. 현재={len(questions)}. DB 질문 수를 확인하세요.")
-
-    return questions
+    return final_questions[:count]
