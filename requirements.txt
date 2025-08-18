@@ -1,16 +1,7 @@
 # 웹 인터페이스
-streamlit
+streamlit>=1.32
 
-# 음성 처리
-SpeechRecognition
-pyaudio
-gTTS
-
-# NLP 및 모델 로딩
-transformers
-torch
-
-# 데이터 처리
+# 데이터 처리 (필요시)
 pandas
 numpy
 
@@ -18,7 +9,11 @@ numpy
 openai>=1.40.0
 
 # 데이터베이스
-pymongo
+pymongo>=4.7
 
 # 기타
 python-dotenv>=1.0
+
+# 마이크 입력 필요시 (브라우저용)
+# streamlit-webrtc>=0.47
+# gTTS  # 필요시만
