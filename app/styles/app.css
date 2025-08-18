@@ -4,10 +4,12 @@
 
 @media (max-width: 480px) {
     .block-welcome h2.opic-header .opic-header-en {
-        font-size: 1.05rem !important;
+        font-size: 0.95rem !important;
         line-height: 1.25 !important;
-        padding: 0 2vw !important;
+        padding: 0 4vw !important;
         display: inline-block;
+        word-break: break-all !important;
+        overflow-wrap: anywhere !important;
     }
     .opic-header-en-desktop { display: none !important; }
     .opic-header-en-mobile { display: inline !important; }
