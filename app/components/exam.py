@@ -212,7 +212,6 @@ def show_exam():
         # 버튼 클릭 후에만 오디오 재생
         audio_data = st.session_state['tts_audio_cache'].get(tts_key)
         if audio_data:
-            st.write(f"audio_data type: {type(audio_data)}, length: {len(audio_data)}")
             try:
                 import base64
                 b64 = base64.b64encode(audio_data).decode()
