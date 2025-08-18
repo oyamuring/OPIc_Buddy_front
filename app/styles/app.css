@@ -9,13 +9,22 @@
 }
 
 .block-welcome h2.opic-header {
-    color: #36f;
-    font-size: clamp(1.2rem, 5vw, 2.1rem);
-    font-weight: bold;
-    /* white-space: nowrap; */
-    word-break: keep-all;
-    overflow-wrap: break-word;
-    text-align: center;
+        color: #36f;
+        font-size: clamp(1rem, 6vw, 2.1rem);
+        font-weight: bold;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        text-align: center;
+        line-height: 1.2;
+}
+
+@media (max-width: 480px) {
+    .block-welcome h2.opic-header {
+        font-size: 1.1rem;
+        line-height: 1.25;
+        padding: 0 2vw;
+    }
+}
 }
 
 .ava-desc {
