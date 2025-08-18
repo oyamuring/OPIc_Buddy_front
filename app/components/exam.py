@@ -212,7 +212,11 @@ def show_exam():
         # 버튼 클릭 후에만 오디오 재생
         audio_data = st.session_state['tts_audio_cache'].get(tts_key)
         if audio_data:
-            st.audio(audio_data, format='audio/mp3')
+            st.write(f"audio_data type: {type(audio_data)}, length: {len(audio_data)}")
+            try:
+                st.audio(audio_data, format='audio/mp3')
+            except Exception as e:
+                st.error(f"st.audio 예외: {e}")
         elif audio_data is not None:
             st.error("TTS 변환 오류: 음성 생성에 실패했습니다. 네트워크 또는 API Key를 확인하세요.")
     # 피드백 메시지 제거 (불필요)
