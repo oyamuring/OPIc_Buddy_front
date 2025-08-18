@@ -18,13 +18,14 @@
         line-height: 1.2;
 }
 
+
 @media (max-width: 480px) {
-    .block-welcome h2.opic-header {
-        font-size: 1.1rem;
-        line-height: 1.25;
-        padding: 0 2vw;
+    .block-welcome h2.opic-header .opic-header-en {
+        font-size: 1.05rem !important;
+        line-height: 1.25 !important;
+        padding: 0 2vw !important;
+        display: inline-block;
     }
-}
 }
 
 .ava-desc {
