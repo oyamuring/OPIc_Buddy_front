@@ -184,7 +184,7 @@ def display_tts_button(text, message_index=0):
         if st.button("🔊 음성으로 듣기", key=unique_key, 
                      help="음성으로 재생하기",
                      use_container_width=True):
-            # _generate_google_tts(text)  # gTTS 제거로 비활성화
+            pass  # gTTS 제거로 비활성화
 
 ## def _generate_google_tts(text, lang="en"):
 ##     """Google TTS로 빠른 음성 생성"""
