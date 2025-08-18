@@ -214,9 +214,18 @@ def show_exam():
         if audio_data:
             st.write(f"audio_data type: {type(audio_data)}, length: {len(audio_data)}")
             try:
-                st.audio(audio_data, format='audio/mp3')
+                import base64
+                b64 = base64.b64encode(audio_data).decode()
+                audio_html = f'''
+                    <audio controls autoplay>
+                        <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+                        <source src="data:audio/mpeg;base64,{b64}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                '''
+                st.markdown(audio_html, unsafe_allow_html=True)
             except Exception as e:
-                st.error(f"st.audio 예외: {e}")
+                st.error(f"audio 태그 예외: {e}")
         elif audio_data is not None:
             st.error("TTS 변환 오류: 음성 생성에 실패했습니다. 네트워크 또는 API Key를 확인하세요.")
     # 피드백 메시지 제거 (불필요)
