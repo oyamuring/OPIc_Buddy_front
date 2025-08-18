@@ -11,8 +11,8 @@ import os
 import time
 import tempfile
 import streamlit as st
-import speech_recognition as sr
-from gtts import gTTS
+## import speech_recognition as sr  # 제거
+## from gtts import gTTS  # 제거
 from openai import OpenAI
 
 class VoiceManager:
@@ -23,24 +23,24 @@ class VoiceManager:
         if api_key:
             self.openai_client = OpenAI(api_key=api_key)
         
-    def text_to_speech(self, text: str, lang: str = 'en') -> bytes:
-        """텍스트를 음성으로 변환"""
-        try:
-            tts = gTTS(text=text, lang=lang, slow=False)
-            fp = io.BytesIO()
-            tts.write_to_fp(fp)
-            fp.seek(0)
-            return fp.getvalue()
-        except Exception as e:
-            st.error(f"TTS 오류: {str(e)}")
-            return None
+    # def text_to_speech(self, text: str, lang: str = 'en') -> bytes:
+    #     """텍스트를 음성으로 변환"""
+    #     try:
+    #         tts = gTTS(text=text, lang=lang, slow=False)
+    #         fp = io.BytesIO()
+    #         tts.write_to_fp(fp)
+    #         fp.seek(0)
+    #         return fp.getvalue()
+    #     except Exception as e:
+    #         st.error(f"TTS 오류: {str(e)}")
+    #         return None
 
-    def play_question_audio(self, question_text: str):
-        """질문을 음성으로 재생"""
-        audio_data = self.text_to_speech(question_text)
-        if audio_data:
-            st.audio(audio_data, format='audio/mp3')
-            st.success("🔊 문제를 재생합니다!")
+    # def play_question_audio(self, question_text: str):
+    #     """질문을 음성으로 재생"""
+    #     audio_data = self.text_to_speech(question_text)
+    #     if audio_data:
+    #         st.audio(audio_data, format='audio/mp3')
+    #         st.success("🔊 문제를 재생합니다!")
 
     def speech_to_text(self, audio_bytes: bytes) -> str:
         """음성을 텍스트로 변환 (OpenAI Whisper API 사용)"""
@@ -113,35 +113,14 @@ def unified_answer_input(question_idx: int, question_text: str) -> str:
             st.success(f"✅ 음성 답변이 저장되어 있습니다")
         
         # 오디오 입력 (개선된 버전)
-        audio_value = st.audio_input(
-            "마이크 버튼을 눌러서 녹음을 시작/종료하세요",
-            key=f"audio_input_{question_idx}",
-            help="마이크 버튼을 클릭하여 녹음을 시작하고, 다시 클릭하여 종료하세요. 최대 60초까지 녹음 가능합니다."
-        )
+    # audio_value = st.audio_input(
+    #     "마이크 버튼을 눌러서 녹음을 시작/종료하세요",
+    #     key=f"audio_input_{question_idx}",
+    #     help="마이크 버튼을 클릭하여 녹음을 시작하고, 다시 클릭하여 종료하세요. 최대 60초까지 녹음 가능합니다."
+    # )
         
-        if audio_value is not None:
-            st.success("🎵 음성이 성공적으로 녹음되었습니다!")
-            
-            # 녹음된 오디오 재생
-            st.audio(audio_value, format='audio/wav')
-            
-            # 오디오 데이터를 세션 상태에 저장 (Next 버튼 클릭 시 자동 변환용)
-            st.session_state[f"audio_data_{question_idx}"] = audio_value.getvalue()
-            
-            # 답변 변환 및 확인 버튼
-            if st.button("내 답변 보기", key=f"stt_btn_{question_idx}"):
-                with st.spinner("🔄 음성을 텍스트로 변환 중..."):
-                    transcript = voice_manager.speech_to_text(audio_value.getvalue())
-                
-                if transcript and not transcript.startswith("[Voice recording"):
-                    final_answer = transcript
-                    st.session_state[answer_key] = final_answer
-                    # 새로 변환된 답변이 바로 표시되도록 페이지 새로고침
-                    st.rerun()
-                else:
-                    st.error("⚠️ 음성 변환에 실패했습니다. 다시 녹음해보세요.")
-        else:
-            pass
+    # audio_value 관련 코드는 speech_recognition/gTTS 제거로 인해 비활성화
+    # 음성 변환 실패/성공 분기 및 audio_value 관련 코드 전체 제거
     with tab2:
         st.markdown("#### 💬 텍스트로 답변하기")
         # 동적 키 적용: exam.py에서 text_input_key_{question_idx}가 있으면 그 값을, 없으면 기본값
@@ -205,82 +184,14 @@ def display_tts_button(text, message_index=0):
         if st.button("🔊 음성으로 듣기", key=unique_key, 
                      help="음성으로 재생하기",
                      use_container_width=True):
-            _generate_google_tts(text)
+            # _generate_google_tts(text)  # gTTS 제거로 비활성화
 
-def _generate_google_tts(text, lang="en"):
-    """Google TTS로 빠른 음성 생성"""
-    try:
-        # 텍스트 검증
-        if not text or len(text.strip()) == 0:
-            st.error("재생할 텍스트가 없습니다.")
-            return
-            
-        # 텍스트 길이 제한
-        if len(text) > 500:
-            text = text[:500] + "..."
-            st.info("텍스트가 길어서 500자까지만 재생됩니다.")
-            
-        with st.spinner("🎵 음성 생성 중..."):
-            # Google TTS로 음성 생성
-            tts = gTTS(text=text, lang=lang, slow=False)
-            
-            # 임시 파일 방식 사용
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as tmp_file:
-                tts.save(tmp_file.name)
-                
-                # 파일 읽기
-                with open(tmp_file.name, 'rb') as audio_file:
-                    audio_bytes = audio_file.read()
-                    
-                # Streamlit에서 음성 재생
-                st.audio(audio_bytes, format='audio/mp3')
-                st.success("🎧 음성 재생 준비 완료!")
-                
-            # 임시 파일 삭제
-            os.unlink(tmp_file.name)
-            
-    except Exception as e:
-        st.error(f"음성 생성 오류: {e}")
-        st.info("인터넷 연결을 확인해주세요.")
+## def _generate_google_tts(text, lang="en"):
+##     """Google TTS로 빠른 음성 생성"""
+##     ... (gTTS 관련 코드 전체 주석 처리)
 
-def recognize_speech():
-    """
-    마이크로부터 음성을 인식하여 텍스트로 변환합니다.
-    
-    Returns:
-        tuple: (성공 여부, 인식된 텍스트 또는 에러 메시지)
-    """
-    try:
-        recognizer = sr.Recognizer()
-        
-        with sr.Microphone() as source:
-            st.info("🎧 말해주세요 (최대 60초)...")
-            audio = recognizer.listen(source, timeout=10, phrase_time_limit=60)
-            st.info("🧠 음성 인식 중...")
-        
-        # Google STT 사용
-        question = recognizer.recognize_google(audio, language="en-US")
-        return True, question
-        
-    except sr.UnknownValueError:
-        return False, "😵 음성을 인식하지 못했습니다."
-    except sr.RequestError as e:
-        return False, f"🔌 Google STT 요청 실패: {e}"
-    except Exception as e:
-        return False, f"⚠️ 음성 인식 오류: {e}"
+## def recognize_speech():
+##     ... (speech_recognition 관련 코드 전체 주석 처리)
 
-def display_speech_interface():
-    """음성 인식 인터페이스를 표시합니다."""
-    # 동일한 크기로 버튼 표시
-    col1, col2 = st.columns([2.5, 1.5])
-    
-    with col2:
-        if st.button("🎤 음성으로 질문하기", key="speech_input", use_container_width=True):
-            with st.spinner("음성 입력을 기다리는 중..."):
-                success, text = recognize_speech()
-                
-            if success:
-                st.success(f"✅ 인식된 질문: {text}")
-                st.session_state.user_input = text
-            else:
-                st.error(text)
+## def display_speech_interface():
+##     pass  # (speech_recognition 관련 코드 전체 주석 처리)
