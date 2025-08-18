@@ -1,3 +1,17 @@
+/* 인트로 영어 헤더 데스크탑/모바일 줄바꿈 분기 */
+.opic-header-en-desktop { display: inline; }
+.opic-header-en-mobile { display: none; }
+
+@media (max-width: 480px) {
+    .block-welcome h2.opic-header .opic-header-en {
+        font-size: 1.05rem !important;
+        line-height: 1.25 !important;
+        padding: 0 2vw !important;
+        display: inline-block;
+    }
+    .opic-header-en-desktop { display: none !important; }
+    .opic-header-en-mobile { display: inline !important; }
+}
 /* OPIc Buddy Application Styles */
 
 /* Welcome/Intro Page Styles */
