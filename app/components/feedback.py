@@ -103,6 +103,22 @@ def show_feedback_page():
     if "comprehensive_feedback" in st.session_state:
         _display_feedback()
 
+    # 하단에 다시하기 버튼 추가
+    st.markdown("---")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("📝 Survey 다시하기"):
+            st.session_state.stage = "survey"
+            st.rerun()
+    with col2:
+        if st.button("🧐 Test 다시하기"):
+            st.session_state.stage = "exam"
+            # 시험 상태 초기화
+            st.session_state.exam_idx = 0
+            st.session_state.exam_answers = []
+            st.session_state.exam_questions = []
+            st.rerun()
+
 def _generate_feedback():
     try:
         progress_bar = st.progress(0)
@@ -140,8 +156,16 @@ def _display_feedback():
 
     st.markdown("---")
     col1, col2 = st.columns(2)
-    col1.metric("📊 총점", f"{fb.get('overall_score',0)}/100")
-    col2.metric("🎯 OPIc 레벨", fb.get("opic_level","-"))
+    col1.metric(
+        "📊 총점",
+        f"{fb.get('overall_score',0)}/100",
+        help="OPIc Buddy의 0~100점 환산 기준에 따라 산출된 전체 평균 점수입니다. 각 문항별 점수를 평균내어 계산합니다."
+    )
+    col2.metric(
+        "🎯 OPIc 레벨",
+        fb.get("opic_level","-"),
+        help="OPIc Buddy의 9단계 등급 체계(AL, IH, IM3, IM2, IM1, IL, NH, NM, NL) 중 본인의 답변 평균 점수에 따라 자동 산정된 레벨입니다."
+    )
     if fb.get("level_description"):
         st.info(f"💡 {fb['level_description']}")
 

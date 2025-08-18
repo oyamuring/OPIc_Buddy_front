@@ -171,73 +171,73 @@ def show_exam():
     exam_idx = st.session_state["exam_idx"]
 
     if exam_idx >= len(questions):
-        st.success("✅ You've completed the mock exam!")
-        if st.button("🔍 Get Feedback"):
-            st.session_state.stage = "feedback"
-            st.rerun()
+        # 바로 feedback 페이지로 이동 (버튼/메시지 없이)
+        st.session_state.stage = "feedback"
+        st.rerun()
         return
 
     current_question = questions[exam_idx]
 
     # 상단 진행 상태
-    st.title(f"🗣️ Question {exam_idx + 1} / {len(questions)}")
+    st.title("🗣️ OPIc Buddy TEST")
+    # 진행도 텍스트
+    st.markdown(f"<div style='font-size:1.1rem; color:#666; margin-bottom:4px;'>진행도: {exam_idx + 1} / {len(questions)}</div>", unsafe_allow_html=True)
     st.progress((exam_idx + 1) / len(questions))
 
-    # 문제 텍스트 + 음성
-    st.markdown(f"**{current_question}**")
-    voice_manager = VoiceManager()
-
-    col_audio, col_gif = st.columns([2, 1])
-    with col_audio:
-        if st.button("🔊 문제 들려줘", key=f"tts_q_{exam_idx}"):
-            # 음성 재생
-            voice_manager.play_question_audio(current_question)
-            # GIF 재생 플래그
-            st.session_state[f"play_gif_{exam_idx}"] = True
-
-    # GIF: base64/HTML로 확실히 재생
-    want_gif = st.session_state.get(f"play_gif_{exam_idx}", False)
-    with col_gif:
-        if want_gif:
-            st.markdown("<div style='height: 10px'></div>", unsafe_allow_html=True)
-            # 프로젝트 내 GIF 경로 지정 (필요에 맞게 변경)
-            gif_html = _gif_to_base64_html("app/chacha.gif", width=228)
-            st.markdown(gif_html, unsafe_allow_html=True)
-            st.markdown("<div style='height: 10px'></div>", unsafe_allow_html=True)
-        else:
-            st.markdown("<div style='height: 48px'></div>", unsafe_allow_html=True)
-
-    # 문제 텍스트 보기 토글
-    show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{exam_idx}")
-    if show_text:
-        st.markdown(
-            f"<div style='font-size:1.1rem; font-weight:600; color:#222;'>{current_question}</div>",
-            unsafe_allow_html=True
-        )
+    # 차차(GIF) 왼쪽, 문제 텍스트 토글+오디오 플레이어 오른쪽 (세로 배치)
+    st.markdown("<div style='height: 8px'></div>", unsafe_allow_html=True)
+    chacha_gif_html = _gif_to_base64_html("app/chacha.gif", width=140)
+    col_left, col_right = st.columns([1, 3])
+    with col_left:
+        st.markdown(chacha_gif_html, unsafe_allow_html=True)
+    with col_right:
+        show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{exam_idx}")
+        if show_text:
+            st.markdown(
+                f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
+                unsafe_allow_html=True
+            )
+        # 오디오 플레이어는 항상 표시
+        voice_manager = VoiceManager()
+        # 자동재생용 play_question_audio는 제거, 오디오 데이터만 생성해서 플레이어 한 번만 표시
+        audio_data = voice_manager.text_to_speech(current_question)
+        if audio_data:
+            st.audio(audio_data, format='audio/mp3')
+    # 피드백 메시지 제거 (불필요)
 
     # 답변 입력(음성+텍스트 통합)
     answer = unified_answer_input(exam_idx, current_question)
 
-    # 네비게이션
-    col1, col2 = st.columns([1, 1])
+    # 네비게이션: Back, Next, Clear
+    col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
-        if st.button("➡️ Next", key=f"next_btn_{exam_idx}"):
-            if answer and answer.strip():
-                st.session_state.exam_answers.append(answer.strip())
-                st.session_state.user_input = ""
-                st.session_state.exam_idx += 1
+        back_label = "← Survey" if exam_idx == 0 else "← Back"
+        if st.button(back_label, key=f"back_btn_{exam_idx}"):
+            if exam_idx == 0:
+                # 첫 문제에서 survey로 이동
+                st.session_state.stage = "survey"
                 st.rerun()
             else:
-                st.warning("⚠️ 답변을 입력하거나 녹음해 주세요.")
-
+                # 이전 문제로 이동
+                st.session_state.exam_idx -= 1
+                st.rerun()
+    import uuid
     with col2:
         if st.button("🧹 Clear Answer", key=f"clear_btn_{exam_idx}"):
             st.session_state[f"ans_{exam_idx}"] = ""
-            st.session_state[f"text_input_{exam_idx}"] = ""
+            # text_input_x의 키를 변경하여 위젯을 새로 렌더링 (세션 상태 직접 할당 X)
+            st.session_state[f"text_input_key_{exam_idx}"] = str(uuid.uuid4())
             st.session_state[f"audio_data_{exam_idx}"] = None
             st.session_state.user_input = ""
-            # GIF도 초기화
             st.session_state[f"play_gif_{exam_idx}"] = False
+            st.rerun()
+    with col3:
+        if st.button("→ Next", key=f"next_btn_{exam_idx}"):
+            # 답변이 있으면 그대로, 없으면 '답변 없음'으로 기록
+            recorded_answer = answer.strip() if answer and answer.strip() else "답변 없음"
+            st.session_state.exam_answers.append(recorded_answer)
+            st.session_state.user_input = ""
+            st.session_state.exam_idx += 1
             st.rerun()
 
 

@@ -144,14 +144,15 @@ def unified_answer_input(question_idx: int, question_text: str) -> str:
             pass
     with tab2:
         st.markdown("#### 💬 텍스트로 답변하기")
+        # 동적 키 적용: exam.py에서 text_input_key_{question_idx}가 있으면 그 값을, 없으면 기본값
+        text_input_key = st.session_state.get(f"text_input_key_{question_idx}", f"text_input_{question_idx}")
         text_answer = st.text_area(
             "Your answer (English):",
             value=current_answer if not current_answer.startswith("[Voice") else "",
-            key=f"text_input_{question_idx}",
+            key=text_input_key,
             height=150,
             help="영어로 답변을 입력해주세요. 음성 답변 대신 직접 텍스트로 입력할 수 있습니다."
         )
-        
         if text_answer.strip():
             final_answer = text_answer.strip()
             st.session_state[answer_key] = final_answer
