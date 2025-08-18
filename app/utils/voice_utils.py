@@ -16,6 +16,22 @@ import streamlit as st
 from openai import OpenAI
 
 class VoiceManager:
+    def text_to_speech(self, text: str, lang: str = 'en') -> bytes:
+        """OpenAI TTS API를 사용해 텍스트를 mp3 음성으로 변환"""
+        if not self.openai_client:
+            st.warning("OpenAI API 키가 설정되지 않아 TTS를 사용할 수 없습니다.")
+            return None
+        try:
+            response = self.openai_client.audio.speech.create(
+                model="tts-1",  # 또는 "tts-1-hd"
+                input=text,
+                voice="alloy",  # "alloy", "echo", "fable", "onyx", "nova", "shimmer" 중 선택 가능
+                response_format="mp3"
+            )
+            return response.content  # mp3 바이너리
+        except Exception as e:
+            st.error(f"TTS 오류: {e}")
+            return None
     def __init__(self):
         # OpenAI API 키 확인
         self.openai_client = None
