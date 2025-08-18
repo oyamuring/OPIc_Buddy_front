@@ -2,78 +2,72 @@
 # Fixed Info Box (진행 바 바로 아래, 카드형 스타일)
 # ========================
 def render_fixed_info(total_selected: int):
-    st.markdown("""
-    <style>
-    .opic-floating-helper {
-        position: fixed;
-        top: 100px;
-        right: 40px;
-        width: 300px;
-        max-width: 32vw;
-        background: #fff;
-        border: 1px solid rgba(244, 98, 31, 0.22);
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.10);
-        padding: 18px 20px 16px 20px;
-        z-index: 9999;
+    st.markdown(f"""
+<style>
+.opic-floating-helper {{
+    position: fixed;
+    top: 100px;
+    right: 40px;
+    width: 300px;
+    max-width: 32vw;
+    background: #fff;
+    border: 1px solid rgba(244, 98, 31, 0.22);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+    padding: 18px 20px 16px 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: box-shadow 0.2s;
+}}
+.opic-floating-helper .title {{
+    font-weight: 800;
+    font-size: 1.08rem;
+    color: #f4621f;
+    margin-bottom: 8px;
+}}
+.opic-floating-helper .desc {{
+    font-size: 0.98rem;
+    color: #39424e;
+    line-height: 1.5;
+}}
+.opic-floating-helper .count {{
+    margin-top: 12px;
+    font-weight: 800;
+    color: #2d5a2d;
+    font-size: 1.05rem;
+}}
+@media (max-width: 1200px) {{
+    .opic-floating-helper {{ display:none; }}
+    .opic-mobile-progress {{
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        transition: box-shadow 0.2s;
-    }
-    .opic-floating-helper .title {
-        font-weight: 800;
-        font-size: 1.08rem;
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 9999;
+        background: #fffbe7;
+        border-top: 1.5px solid #f4621f33;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.01rem;
+        font-weight: 700;
         color: #f4621f;
-        margin-bottom: 8px;
-    }
-    .opic-floating-helper .desc {
-        font-size: 0.98rem;
-        color: #39424e;
-        line-height: 1.5;
-    }
-    .opic-floating-helper .count {
-        margin-top: 12px;
-        font-weight: 800;
-        color: #2d5a2d;
-        font-size: 1.05rem;
-    }
-    @media (max-width: 1200px) {
-        .opic-floating-helper { display:none; }
-    }
-    </style>
-    """, unsafe_allow_html=True)
-        st.markdown(f"""
-        <div class="opic-floating-helper">
-                <div class="title">선택 진행 상황</div>
-                <div class="desc">
-                        총 <b>12개 이상</b> 선택해야 다음 단계로 이동할 수 있어요.<br>
-                </div>
-                <div class="count">현재 선택: {total_selected}개</div>
-        </div>
-        <style>
-        @media (max-width: 1200px) {
-            .opic-mobile-progress {
-                display: flex;
-                position: fixed;
-                left: 0; right: 0; bottom: 0;
-                z-index: 9999;
-                background: #fffbe7;
-                border-top: 1.5px solid #f4621f33;
-                justify-content: center;
-                align-items: center;
-                font-size: 1.01rem;
-                font-weight: 700;
-                color: #f4621f;
-                padding: 8px 0 7px 0;
-                box-shadow: 0 -2px 12px #0001;
-            }
-        }
-        </style>
-        <div class="opic-mobile-progress">
-            선택 {total_selected} / 12개 이상 선택해야 다음 단계로 이동
-        </div>
-        """, unsafe_allow_html=True)
+        padding: 8px 0 7px 0;
+        box-shadow: 0 -2px 12px #0001;
+    }}
+}}
+</style>
+<div class="opic-floating-helper">
+    <div class="title">선택 진행 상황</div>
+    <div class="desc">
+        총 <b>12개 이상</b> 선택해야 다음 단계로 이동할 수 있어요.<br>
+    </div>
+    <div class="count">현재 선택: {total_selected}개</div>
+</div>
+<div class="opic-mobile-progress">
+  선택 {total_selected} / 12개 이상 선택해야 다음 단계로 이동
+</div>
+""", unsafe_allow_html=True)
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
