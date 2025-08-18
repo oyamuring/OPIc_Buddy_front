@@ -10,9 +10,10 @@
 
 .block-welcome h2.opic-header {
     color: #36f;
-    font-size: 2.1rem;
+    font-size: clamp(1.2rem, 5vw, 2.1rem);
     font-weight: bold;
-    white-space: nowrap;
+    /* white-space: nowrap; */
+    word-break: keep-all;
     overflow-wrap: break-word;
     text-align: center;
 }
