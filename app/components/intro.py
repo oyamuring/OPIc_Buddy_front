@@ -14,8 +14,8 @@ def show_intro():
     # 타이틀 + 설명
     st.markdown("""
     <div class="block-welcome" style='text-align: center;'>
-        <h2 class="opic-header" style="font-size:2.1rem;">
-            🔊 <span style='color:#36f; font-weight:bold;'>Oral Proficiency Interview - computer</span>
+        <h2 class="opic-header">
+            🔊 <span style='color:#36f; font-weight:bold;'>Oral Proficiency Interview<br>- computer</span>
             <span style='color: #36f; font-weight:bold;'>(OPIc)</span>
         </h2>
         <p style="font-size:1.25rem; font-weight:bold;">지금부터 <span style='color:#f4621f; font-weight:bold;'>English 말하기 평가</span>를 시작하겠습니다.</p>
@@ -34,15 +34,15 @@ def _display_chacha_image():
     if chacha_path.exists():
         with open(chacha_path, "rb") as img_file:
             img_base64 = base64.b64encode(img_file.read()).decode("utf-8")
-        st.markdown(
-            f"""
-            <div style='display: flex; flex-direction: column; align-items: center; justify-content: center;'>
-                <img src="data:image/png;base64,{img_base64}" alt="chacha" style="width: 228px;"/>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        st.markdown(
+        st.markdown("""
+        <div class="block-welcome" style='text-align: center;'>
+            <h2 class="opic-header">
+                🔊 <span style='color:#36f; font-weight:bold;'>Oral Proficiency Interview<br>- computer</span>
+                <span style='color: #36f; font-weight:bold;'>(OPIc)</span>
+            </h2>
+            <p style="font-size:1.25rem; font-weight:bold;">지금부터 <span style='color:#f4621f; font-weight:bold;'>English 말하기 평가</span>를 시작하겠습니다.</p>
+        </div>
+        """, unsafe_allow_html=True)
             """
             <div style='font-size: 1.35rem; font-weight: 600; color: #222; text-align: center; margin-top: 18px; margin-bottom: 40px;'>
             본 인터뷰 평가의 진행자는 chacha입니다.
