@@ -1,26 +1,38 @@
-import sys
+# -*- coding: utf-8 -*-
+"""
+OPIc Exam Page (feature/opic-questions 우선)
+- 설문 기반 15문항 생성(create_opic_exam)
+- Streamlit 화면(show_exam)
+- GIF 재생: base64/HTML로 확실히 움직이게 처리
+"""
+
 import os
+import sys
+import random
+import asyncio
+import base64
+from typing import List, Dict
+
+# --- 프로젝트 루트 경로 추가 (필요 시) ---
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-import random
-import asyncio
-from typing import List, Dict
-from quest import make_questions
-from .survey import get_survey_data, get_user_profile, KO_EN_MAPPING # 이미 수정됨urvey import get_survey_data, get_user_profile, KO_EN_MAPPING
+import streamlit as st
 
+# 내부 모듈
+from quest import make_questions
+from .survey import get_survey_data, get_user_profile, KO_EN_MAPPING  # ← 오타/중복 주석 제거
+from app.utils.voice_utils import VoiceManager, unified_answer_input  # 음성 유틸
 
 # ========================
 # Helper Functions
 # ========================
 def get_survey_topics_from_data() -> Dict[str, List[str]]:
     """
-    Extracts all possible survey topics from the opic_data to be used for the exam.
+    Extracts all possible survey topics to be used for the exam.
+    (feature/opic-questions 분기에서 쓰던 기본 구조 유지)
     """
-    # Assuming the opic_data dictionary from quest.py is accessible here
-    # or that a similar function exists to retrieve it.
-    # For this example, we'll use a placeholder structure based on the provided JSON.
     topic_structure = {
         "survey": [
             "have work experience", "living alone in a house/apartment", "living with friends in a house/apartment",
@@ -56,7 +68,6 @@ def get_mapped_survey_topics() -> List[str]:
     survey_data = get_survey_data()
     selected_topics = []
 
-    # Get topics from work, living, and education
     if "work" in survey_data and survey_data["work"].get("field"):
         selected_topics.append(survey_data["work"]["field"])
     if "living" in survey_data:
@@ -64,7 +75,6 @@ def get_mapped_survey_topics() -> List[str]:
     if "education" in survey_data and survey_data["education"].get("is_student"):
         selected_topics.append(survey_data["education"]["is_student"])
 
-    # Get topics from multiple-choice activities
     activities = survey_data.get("activities", {})
     for category in ["leisure", "hobbies", "sports", "travel"]:
         selected_topics.extend(activities.get(category, []))
@@ -73,40 +83,31 @@ def get_mapped_survey_topics() -> List[str]:
 
 
 # ========================
-# Main Exam Generation Logic
+# Exam Generation (feature branch)
 # ========================
 async def create_opic_exam() -> List[str]:
     """
     Generates a full 15-question OPIc-style exam based on the survey results.
-    The structure is:
-    1.  Self-introduction (1 question)
-    2-10. Three sets of 3 questions each from the user's selected survey topics.
-    11-13. One set of 3 questions from the 'role-play' category.
-    14-15. Two questions from the 'random_question' category.
-
-    Returns:
-        A list of 15 questions for the exam.
+    1: 자기소개 1문항
+    2-10: 설문 기반 3세트 x 각 3문항
+    11-13: 롤플레이 3문항
+    14-15: 랜덤 2문항
     """
-    exam_questions = []
+    exam_questions: List[str] = []
 
-    # Get user's level from survey data
     survey_data = get_survey_data()
     user_level = survey_data.get("self_assessment", "level_5")
 
-    # 1. Self-introduction (1 question)
+    # 1. Self-introduction
     exam_questions.append("Tell me about yourself.")
 
-    # 2-10. Survey questions (3 sets of 3 questions)
+    # 2-10. Survey topics (3 topics x 3 questions)
     user_survey_topics = get_mapped_survey_topics()
+    unique_topics = list({t for t in user_survey_topics if t})
 
-    # Filter out empty or duplicate topics
-    unique_topics = list(set(user_survey_topics))
-
-    # Ensure we have at least 3 unique topics to pull from
     if len(unique_topics) >= 3:
         topics_for_exam = random.sample(unique_topics, 3)
     else:
-        # If not enough survey topics were selected, fall back to a default set
         all_survey_topics = get_survey_topics_from_data()["survey"]
         topics_for_exam = random.sample(all_survey_topics, 3)
 
@@ -114,13 +115,13 @@ async def create_opic_exam() -> List[str]:
         questions = await make_questions(topic, 'survey', user_level, 3)
         exam_questions.extend(questions)
 
-    # 11-13. Role-play questions (3 questions)
+    # 11-13. Role-play (3 questions)
     role_play_topics = get_survey_topics_from_data()["role_play"]
     role_play_topic = random.choice(role_play_topics)
     role_play_questions = await make_questions(role_play_topic, 'role_play', user_level, 3)
     exam_questions.extend(role_play_questions)
 
-    # 14-15. Random questions (2 questions)
+    # 14-15. Random (2 questions)
     random_question_topics = get_survey_topics_from_data()["random_question"]
     random_topic = random.choice(random_question_topics)
     random_questions = await make_questions(random_topic, 'random_question', user_level, 2)
@@ -129,22 +130,45 @@ async def create_opic_exam() -> List[str]:
     return exam_questions
 
 
-# This part would be used to run the generation logic
-# and is where the streamlit app would get the questions.
-async def get_final_questions_for_streamlit():
-    """
-    An entry point for the Streamlit app to get the final exam questions.
-    """
-    final_questions = await create_opic_exam()
-    return final_questions
+async def get_final_questions_for_streamlit() -> List[str]:
+    """Streamlit에서 최종 15문항 불러올 엔트리 포인트."""
+    return await create_opic_exam()
 
-# main에 넘길거
-import streamlit as st
-from app.utils.voice_utils import VoiceManager, unified_answer_input
 
+# ========================
+# GIF Utilities (확실히 움직이게)
+# ========================
+def _gif_to_base64_html(gif_path: str, width: int | None = None) -> str:
+    """GIF 파일을 base64 data-URI로 변환해 <img> HTML 반환."""
+    if not os.path.exists(gif_path):
+        # 경로가 상대라면 Streamlit 실행 위치 기준이라 종종 꼬임 → 프로젝트 루트도 시도
+        alt = os.path.join(project_root, gif_path)
+        gif_path = alt if os.path.exists(alt) else gif_path
+
+    with open(gif_path, "rb") as f:
+        b64 = base64.b64encode(f.read()).decode("utf-8")
+    size_attr = f" width='{width}'" if width else ""
+    return f"<img src='data:image/gif;base64,{b64}'{size_attr} style='display:block;margin:auto;' />"
+
+
+# ========================
+# Streamlit Page
+# ========================
 def show_exam():
-    questions = st.session_state.get("exam_questions", [])
-    exam_idx = st.session_state.get("exam_idx", 0)
+    # 세션 준비
+    if "exam_questions" not in st.session_state or not st.session_state["exam_questions"]:
+        # 최초 진입 시 비동기 생성
+        with st.spinner("문제를 생성하는 중..."):
+            qs = asyncio.run(get_final_questions_for_streamlit())
+        st.session_state["exam_questions"] = qs
+
+    if "exam_answers" not in st.session_state or not isinstance(st.session_state["exam_answers"], list):
+        st.session_state["exam_answers"] = []
+    if "exam_idx" not in st.session_state:
+        st.session_state["exam_idx"] = 0
+
+    questions = st.session_state["exam_questions"]
+    exam_idx = st.session_state["exam_idx"]
 
     if exam_idx >= len(questions):
         st.success("✅ You've completed the mock exam!")
@@ -153,28 +177,52 @@ def show_exam():
             st.rerun()
         return
 
-    # 현재 질문
     current_question = questions[exam_idx]
 
-    st.title(f"🗣️ Question {exam_idx + 1} of {len(questions)}")
+    # 상단 진행 상태
+    st.title(f"🗣️ Question {exam_idx + 1} / {len(questions)}")
+    st.progress((exam_idx + 1) / len(questions))
 
-    # 질문 표시 + TTS 재생 버튼
+    # 문제 텍스트 + 음성
     st.markdown(f"**{current_question}**")
     voice_manager = VoiceManager()
 
-    col1, col2 = st.columns([2, 1])
-    with col2:
+    col_audio, col_gif = st.columns([2, 1])
+    with col_audio:
         if st.button("🔊 문제 들려줘", key=f"tts_q_{exam_idx}"):
+            # 음성 재생
             voice_manager.play_question_audio(current_question)
+            # GIF 재생 플래그
+            st.session_state[f"play_gif_{exam_idx}"] = True
 
-    # 답변 입력 (음성 + 텍스트 통합)
+    # GIF: base64/HTML로 확실히 재생
+    want_gif = st.session_state.get(f"play_gif_{exam_idx}", False)
+    with col_gif:
+        if want_gif:
+            st.markdown("<div style='height: 10px'></div>", unsafe_allow_html=True)
+            # 프로젝트 내 GIF 경로 지정 (필요에 맞게 변경)
+            gif_html = _gif_to_base64_html("app/chacha.gif", width=228)
+            st.markdown(gif_html, unsafe_allow_html=True)
+            st.markdown("<div style='height: 10px'></div>", unsafe_allow_html=True)
+        else:
+            st.markdown("<div style='height: 48px'></div>", unsafe_allow_html=True)
+
+    # 문제 텍스트 보기 토글
+    show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{exam_idx}")
+    if show_text:
+        st.markdown(
+            f"<div style='font-size:1.1rem; font-weight:600; color:#222;'>{current_question}</div>",
+            unsafe_allow_html=True
+        )
+
+    # 답변 입력(음성+텍스트 통합)
     answer = unified_answer_input(exam_idx, current_question)
 
-    # 버튼
+    # 네비게이션
     col1, col2 = st.columns([1, 1])
     with col1:
         if st.button("➡️ Next", key=f"next_btn_{exam_idx}"):
-            if answer.strip():
+            if answer and answer.strip():
                 st.session_state.exam_answers.append(answer.strip())
                 st.session_state.user_input = ""
                 st.session_state.exam_idx += 1
@@ -188,4 +236,13 @@ def show_exam():
             st.session_state[f"text_input_{exam_idx}"] = ""
             st.session_state[f"audio_data_{exam_idx}"] = None
             st.session_state.user_input = ""
+            # GIF도 초기화
+            st.session_state[f"play_gif_{exam_idx}"] = False
             st.rerun()
+
+
+# ---- 이 모듈을 직접 실행했을 때의 가벼운 테스트 진입점 ----
+if __name__ == "__main__":
+    # streamlit run app/pages/exam.py 로 실행하는 것을 권장
+    # 여기서는 함수만 호출
+    show_exam()

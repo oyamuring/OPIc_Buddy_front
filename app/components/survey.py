@@ -357,47 +357,36 @@ def handle_single_choice_step(step, total_steps):
 def handle_sub_questions(step, answer):
     """추가 질문들을 처리합니다."""
     sub_answers = {}
-    
     if step == 0:  # Step 1
         if answer in ["사업/회사", "재택근무/재택사업"]:
-            sub_answers["job"] = st.radio("현재 귀하는 직업이 있으십니까?", ["예", "아니요"], 
-                                key=f"survey_step_{step}_sub", index=None)
+            sub_answers["job"] = st.radio("현재 귀하는 직업이 있으십니까?", ["예", "아니요"], key=f"survey_step_{step}_sub")
             if sub_answers.get("job") == "예":
-                sub_answers["period"] = st.radio("귀하의 근무 기간은 얼마나 되십니까?", 
-                                        ["첫직장- 2개월 미만", "첫직장- 2개월 이상", "첫직장 아님 - 경험 많음"], 
-                                        key=f"survey_step_{step}_sub_sub", index=None)
+                sub_answers["period"] = st.radio("귀하의 근무 기간은 얼마나 되십니까?",
+                                        ["첫직장- 2개월 미만", "첫직장- 2개월 이상", "첫직장 아님 - 경험 많음"], key=f"survey_step_{step}_sub_sub")
                 if sub_answers.get("period") in ["첫직장- 2개월 이상", "첫직장 아님 - 경험 많음"]:
-                    sub_answers["management"] = st.radio("귀하는 부하직원을 관리하는 관리직을 맡고 있습니까?", 
-                                                ["예", "아니요"], key=f"survey_step_{step}_sub_sub_sub", index=None)
+                    sub_answers["management"] = st.radio("귀하는 부하직원을 관리하는 관리직을 맡고 있습니까?",
+                                                ["예", "아니요"], key=f"survey_step_{step}_sub_sub_sub")
         elif answer == "교사/교육자":
-            sub_answers["institution"] = st.radio("현재 귀하는 어디에서 학생을 가르치십니까?", 
-                                ["대학 이상", "초등/중/고등학교", "평생교육"], 
-                                key=f"survey_step_{step}_sub", index=None)
+            sub_answers["institution"] = st.radio("현재 귀하는 어디에서 학생을 가르치십니까?",
+                                ["대학 이상", "초등/중/고등학교", "평생교육"], key=f"survey_step_{step}_sub")
             if sub_answers.get("institution") is not None:
-                sub_answers["job"] = st.radio("현재 귀하는 직업이 있으십니까?", ["예", "아니요"], 
-                                        key=f"survey_step_{step}_sub_sub", index=None)
+                sub_answers["job"] = st.radio("현재 귀하는 직업이 있으십니까?", ["예", "아니요"], key=f"survey_step_{step}_sub_sub")
                 if sub_answers.get("job") == "예":
-                    sub_answers["period"] = st.radio("귀하의 근무 기간은 얼마나 되십니까?", 
-                                                ["2개월 미만 - 첫직장", 
-                                                 "2개월 미만 - 교직은 처음이지만 이전에 다른 직업을 가진 적이 있음", 
-                                                 "2개월 이상"], 
-                                                key=f"survey_step_{step}_sub_sub_sub", index=None)
+                    sub_answers["period"] = st.radio("귀하의 근무 기간은 얼마나 되십니까?",
+                                                ["2개월 미만 - 첫직장",
+                                                 "2개월 미만 - 교직은 처음이지만 이전에 다른 직업을 가진 적이 있음",
+                                                 "2개월 이상"], key=f"survey_step_{step}_sub_sub_sub")
                     if sub_answers.get("period") == "2개월 이상":
-                        sub_answers["management"] = st.radio("귀하는 부하직원을 관리하는 관리직을 맡고 있습니까?", 
-                                                        ["예", "아니요"], 
-                                                        key=f"survey_step_{step}_sub_sub_sub_sub", index=None)
-    
+                        sub_answers["management"] = st.radio("귀하는 부하직원을 관리하는 관리직을 맡고 있습니까?",
+                                                        ["예", "아니요"], key=f"survey_step_{step}_sub_sub_sub_sub")
     elif step == 1:  # Step 2
         if answer == "예":
-            sub_answers["current_class"] = st.radio("현재 어떤 강의를 듣고 있습니까?", 
-                                ["학위 과정 수업", "전문 기술 향상을 위한 평생 학습", "어학수업"], 
-                                key=f"survey_step_{step}_sub", index=None)
+            sub_answers["current_class"] = st.radio("현재 어떤 강의를 듣고 있습니까?",
+                                ["학위 과정 수업", "전문 기술 향상을 위한 평생 학습", "어학수업"], key=f"survey_step_{step}_sub")
         elif answer == "아니요":
-            sub_answers["recent_class"] = st.radio("최근 어떤 강의를 수강했습니까?", 
-                                ["학위 과정 수업", "전문 기술 향상을 위한 평생 학습", "어학수업", 
-                                 "수강 후 5년 이상 지남"], 
-                                key=f"survey_step_{step}_sub", index=None)
-    
+            sub_answers["recent_class"] = st.radio("최근 어떤 강의를 수강했습니까?",
+                                ["학위 과정 수업", "전문 기술 향상을 위한 평생 학습", "어학수업",
+                                 "수강 후 5년 이상 지남"], key=f"survey_step_{step}_sub")
     return sub_answers
 
 def check_can_proceed(step, answer, sub_answers):
@@ -493,17 +482,13 @@ def display_leisure_activities(step):
     leisure_count = len(st.session_state[f"leisure_selections_{step}"])
     st.markdown(f"<small style='color: #666;'>선택됨: {leisure_count}개 (최소 2개 필요)</small>", unsafe_allow_html=True)
     
+    updated_list = []
     for activity in LEISURE_ACTIVITIES:
-        current_checked = st.checkbox(activity, key=f"leisure_{activity}_{step}", 
-                                    value=activity in st.session_state[f"leisure_selections_{step}"])
-        
-        if current_checked and activity not in st.session_state[f"leisure_selections_{step}"]:
-            st.session_state[f"leisure_selections_{step}"].append(activity)
-            st.rerun()
-        elif not current_checked and activity in st.session_state[f"leisure_selections_{step}"]:
-            st.session_state[f"leisure_selections_{step}"].remove(activity)
-            st.rerun()
-    
+        checked = st.checkbox(activity, key=f"leisure_{activity}_{step}",
+                              value=activity in st.session_state[f"leisure_selections_{step}"])
+        if checked:
+            updated_list.append(activity)
+    st.session_state[f"leisure_selections_{step}"] = updated_list
     st.markdown("---")
 
 def display_hobbies(step):
@@ -512,17 +497,13 @@ def display_hobbies(step):
     hobby_count = len(st.session_state[f"hobby_selections_{step}"])
     st.markdown(f"<small style='color: #666;'>선택됨: {hobby_count}개 (최소 1개 필요)</small>", unsafe_allow_html=True)
     
+    updated_list = []
     for hobby in HOBBIES:
-        current_checked = st.checkbox(hobby, key=f"hobby_{hobby}_{step}", 
-                                    value=hobby in st.session_state[f"hobby_selections_{step}"])
-        
-        if current_checked and hobby not in st.session_state[f"hobby_selections_{step}"]:
-            st.session_state[f"hobby_selections_{step}"].append(hobby)
-            st.rerun()
-        elif not current_checked and hobby in st.session_state[f"hobby_selections_{step}"]:
-            st.session_state[f"hobby_selections_{step}"].remove(hobby)
-            st.rerun()
-    
+        checked = st.checkbox(hobby, key=f"hobby_{hobby}_{step}",
+                              value=hobby in st.session_state[f"hobby_selections_{step}"])
+        if checked:
+            updated_list.append(hobby)
+    st.session_state[f"hobby_selections_{step}"] = updated_list
     st.markdown("---")
 
 def display_sports(step):
@@ -531,17 +512,13 @@ def display_sports(step):
     sport_count = len(st.session_state[f"sport_selections_{step}"])
     st.markdown(f"<small style='color: #666;'>선택됨: {sport_count}개 (최소 1개 필요)</small>", unsafe_allow_html=True)
     
+    updated_list = []
     for sport in SPORTS:
-        current_checked = st.checkbox(sport, key=f"sport_{sport}_{step}", 
-                                    value=sport in st.session_state[f"sport_selections_{step}"])
-        
-        if current_checked and sport not in st.session_state[f"sport_selections_{step}"]:
-            st.session_state[f"sport_selections_{step}"].append(sport)
-            st.rerun()
-        elif not current_checked and sport in st.session_state[f"sport_selections_{step}"]:
-            st.session_state[f"sport_selections_{step}"].remove(sport)
-            st.rerun()
-    
+        checked = st.checkbox(sport, key=f"sport_{sport}_{step}",
+                              value=sport in st.session_state[f"sport_selections_{step}"])
+        if checked:
+            updated_list.append(sport)
+    st.session_state[f"sport_selections_{step}"] = updated_list
     st.markdown("---")
 
 def display_travel(step):
@@ -550,16 +527,13 @@ def display_travel(step):
     travel_count = len(st.session_state[f"travel_selections_{step}"])
     st.markdown(f"<small style='color: #666;'>선택됨: {travel_count}개 (최소 1개 필요)</small>", unsafe_allow_html=True)
     
+    updated_list = []
     for trip in TRAVEL:
-        current_checked = st.checkbox(trip, key=f"travel_{trip}_{step}", 
-                                    value=trip in st.session_state[f"travel_selections_{step}"])
-        
-        if current_checked and trip not in st.session_state[f"travel_selections_{step}"]:
-            st.session_state[f"travel_selections_{step}"].append(trip)
-            st.rerun()
-        elif not current_checked and trip in st.session_state[f"travel_selections_{step}"]:
-            st.session_state[f"travel_selections_{step}"].remove(trip)
-            st.rerun()
+        checked = st.checkbox(trip, key=f"travel_{trip}_{step}",
+                              value=trip in st.session_state[f"travel_selections_{step}"])
+        if checked:
+            updated_list.append(trip)
+    st.session_state[f"travel_selections_{step}"] = updated_list
 
 def check_multi_select_completion(step, total_selected):
     """다중 선택 완료 여부를 확인합니다."""
@@ -588,40 +562,24 @@ def handle_self_assessment_step(step, total_steps):
         </div>
     </div>
     """, unsafe_allow_html=True)
-    
-    # 라디오 버튼으로 레벨 선택
-    level_options = []
-    for level_info in SELF_ASSESSMENT_LEVELS:
-        level_options.append(f"레벨 {level_info['level']}")
-    
-    selected_level = st.radio(
-        "본인의 영어 말하기 능력 수준을 선택하세요:",
-        level_options,
-        key=f"self_assessment_{step}",
-        index=None
+
+    level_options = [f"레벨 {info['level']}" for info in SELF_ASSESSMENT_LEVELS]
+    level_labels = [f"레벨 {info['level']}: {info['desc']}" for info in SELF_ASSESSMENT_LEVELS]
+
+    selected_label = st.radio(
+        "본인에게 가장 가까운 레벨을 하나 선택하세요.",
+        options=level_labels,
+        key=f"self_assessment_{step}_radio"
     )
-    
-    # 선택된 레벨에 대한 상세 설명 표시
-    if selected_level:
-        level_num = int(selected_level.split()[-1])  # "레벨 1" -> 1
-        level_info = SELF_ASSESSMENT_LEVELS[level_num - 1]
-        
-        st.markdown(f"""
-        <div style="background:#f8f9fa; border-left: 4px solid #f4621f; padding: 16px; margin: 16px 0; border-radius: 0 8px 8px 0;">
-            <div style="font-size:1.1rem; font-weight:600; color:#f4621f; margin-bottom: 8px;">
-                📋 레벨 {level_num} 설명
-            </div>
-            <div style="font-size:1.0rem; color:#333; line-height: 1.6;">
-                {level_info['desc']}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # 진행 가능 여부 확인
+
+    if selected_label:
+        idx = level_labels.index(selected_label)
+        selected_level = level_options[idx]
+    else:
+        selected_level = None
+
     can_proceed = selected_level is not None
     answer = selected_level if selected_level else None
-    
-    # 네비게이션 버튼
     display_navigation_buttons(step, total_steps, can_proceed, answer)
 
 # ========================

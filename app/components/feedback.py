@@ -86,6 +86,17 @@ def show_feedback_page():
             st.rerun()
         return
 
+    # ===== 전체 질문/답변 카드 형태로 항상 표시 =====
+    st.markdown("---")
+    questions = st.session_state.get("exam_questions", [])
+    answers = st.session_state.get("exam_answers", [])
+    with st.expander("📋 내가 답변한 전체 질문/답변", expanded=True):
+        for i, (q, a) in enumerate(zip(questions, answers), 1):
+            st.markdown(f"<div style='background:#f8f9fa;border-radius:8px;padding:14px 18px;margin-bottom:10px;box-shadow:0 1px 4px #0001;'>"
+                        f"<b style='color:#1976d2;'>Q{i}.</b> <span style='font-size:1.08em;font-weight:500'>{q}</span><br>"
+                        f"<span style='color:#222;font-size:1.04em;'><b>내 답변:</b> {a if a else '<i>(답변 없음)</i>'}</span>"
+                        "</div>", unsafe_allow_html=True)
+ 
     if st.button("📊 OPIc 레벨 분석 & 피드백 받기", type="primary"):
         _generate_feedback()
 
@@ -134,12 +145,13 @@ def _display_feedback():
     if fb.get("level_description"):
         st.info(f"💡 {fb['level_description']}")
 
-    st.markdown("---")
+    # (상단 질문/답변 요약은 show_feedback_page에서 항상 카드로 보여주므로 여기선 제거)
     st.markdown("## 📝 문항별 상세 피드백")
     indiv = fb.get("individual_feedback", [])
     qs = st.session_state.exam_questions
     ans = st.session_state.exam_answers
 
+    answer_audio_files = st.session_state.get("answer_audio_files", [None]*len(ans))
     for item in indiv:
         qn = item.get("question_num", 0)
         i = qn - 1
@@ -152,6 +164,13 @@ def _display_feedback():
             st.markdown("### 📝 내 답변")
             user_answer = ans[i] if i < len(ans) else ""
             st.write(f'"{user_answer}"' if user_answer else "_(답변 없음)_")
+            # 내 답변 오디오 듣기 버튼 (항상 표시, 파일이 있으면 재생)
+            audio_file = answer_audio_files[i] if i < len(answer_audio_files) else None
+            if st.button("🎤 내 답변 듣기", key=f"play_my_{qn}"):
+                if audio_file:
+                    st.audio(audio_file, format="audio/mp3")
+                else:
+                    st.warning("녹음된 음성 파일이 없습니다.")
 
             st.markdown("### 💭 피드백")
             c1, c2 = st.columns(2)
@@ -167,6 +186,11 @@ def _display_feedback():
             sample = item.get("sample_answer","")
             if sample:
                 st.markdown("### ✨ 개선된 모범답안")
+                st.markdown(
+                    '<span style="font-size:0.98em;">'
+                    ' <span style="color:#d32f2f;font-weight:600;">빨간색</span>: 문법 수정 '
+                    ' <span style="color:#1976d2;font-weight:600;">파란색</span>: 내용 추가/개선'
+                    '</span>', unsafe_allow_html=True)
                 html = highlight_text_differences(user_answer, sample)
                 st.markdown(
                     '<div style="background-color:#f8f9fa;padding:16px;border-radius:8px;'
