@@ -43,15 +43,37 @@ def render_fixed_info(total_selected: int):
     }
     </style>
     """, unsafe_allow_html=True)
-    st.markdown(f"""
-    <div class="opic-floating-helper">
-        <div class="title">선택 진행 상황</div>
-        <div class="desc">
-            총 <b>12개 이상</b> 선택해야 다음 단계로 이동할 수 있어요.<br>
+        st.markdown(f"""
+        <div class="opic-floating-helper">
+                <div class="title">선택 진행 상황</div>
+                <div class="desc">
+                        총 <b>12개 이상</b> 선택해야 다음 단계로 이동할 수 있어요.<br>
+                </div>
+                <div class="count">현재 선택: {total_selected}개</div>
         </div>
-        <div class="count">현재 선택: {total_selected}개</div>
-    </div>
-    """, unsafe_allow_html=True)
+        <style>
+        @media (max-width: 1200px) {
+            .opic-mobile-progress {
+                display: flex;
+                position: fixed;
+                left: 0; right: 0; bottom: 0;
+                z-index: 9999;
+                background: #fffbe7;
+                border-top: 1.5px solid #f4621f33;
+                justify-content: center;
+                align-items: center;
+                font-size: 1.01rem;
+                font-weight: 700;
+                color: #f4621f;
+                padding: 8px 0 7px 0;
+                box-shadow: 0 -2px 12px #0001;
+            }
+        }
+        </style>
+        <div class="opic-mobile-progress">
+            선택 {total_selected} / 12개 이상 선택해야 다음 단계로 이동
+        </div>
+        """, unsafe_allow_html=True)
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 

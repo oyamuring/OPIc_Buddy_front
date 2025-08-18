@@ -197,12 +197,24 @@ def show_exam():
                 f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
                 unsafe_allow_html=True
             )
-        # 오디오 플레이어는 항상 표시
-        voice_manager = VoiceManager()
-        # 자동재생용 play_question_audio는 제거, 오디오 데이터만 생성해서 플레이어 한 번만 표시
-        audio_data = voice_manager.text_to_speech(current_question)
+        # 문제 듣기 버튼 (모바일 호환)
+        if 'tts_audio_cache' not in st.session_state:
+            st.session_state['tts_audio_cache'] = {}
+        tts_key = f"q{exam_idx}_tts"
+        if st.button("🔊 문제 듣기", key=f"tts_btn_{exam_idx}"):
+            with st.spinner("문제 음성 변환 중..."):
+                voice_manager = VoiceManager()
+                audio_data = voice_manager.text_to_speech(current_question)
+                if audio_data:
+                    st.session_state['tts_audio_cache'][tts_key] = audio_data
+                else:
+                    st.session_state['tts_audio_cache'][tts_key] = None
+        # 버튼 클릭 후에만 오디오 재생
+        audio_data = st.session_state['tts_audio_cache'].get(tts_key)
         if audio_data:
             st.audio(audio_data, format='audio/mp3')
+        elif audio_data is not None:
+            st.error("TTS 변환 오류: 음성 생성에 실패했습니다. 네트워크 또는 API Key를 확인하세요.")
     # 피드백 메시지 제거 (불필요)
 
     # 답변 입력(음성+텍스트 통합)
@@ -233,9 +245,15 @@ def show_exam():
             st.rerun()
     with col3:
         if st.button("→ Next", key=f"next_btn_{exam_idx}"):
-            # 답변이 있으면 그대로, 없으면 '답변 없음'으로 기록
-            recorded_answer = answer.strip() if answer and answer.strip() else "답변 없음"
+            # 답변이 있으면 그대로, 없으면 '무응답'으로 기록
+            recorded_answer = answer.strip() if answer and answer.strip() else "무응답"
             st.session_state.exam_answers.append(recorded_answer)
+            # 오디오 파일도 함께 저장 (없으면 None)
+            audio_key = f"audio_data_{exam_idx}"
+            audio_data = st.session_state.get(audio_key)
+            if "answer_audio_files" not in st.session_state:
+                st.session_state["answer_audio_files"] = []
+            st.session_state["answer_audio_files"].append(audio_data)
             st.session_state.user_input = ""
             st.session_state.exam_idx += 1
             st.rerun()
