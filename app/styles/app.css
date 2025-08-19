@@ -4,12 +4,14 @@
 
 @media (max-width: 480px) {
     .block-welcome h2.opic-header .opic-header-en {
-        font-size: 0.95rem !important;
-        line-height: 1.25 !important;
-        padding: 0 4vw !important;
+        font-size: 0.85rem !important;
+        line-height: 1.18 !important;
+        padding: 0 7vw !important;
         display: inline-block;
         word-break: break-all !important;
         overflow-wrap: anywhere !important;
+        max-width: 100vw;
+        box-sizing: border-box;
     }
     .opic-header-en-desktop { display: none !important; }
     .opic-header-en-mobile { display: inline !important; }
@@ -46,9 +48,6 @@
         max-width: 100vw;
         box-sizing: border-box;
     }
-}
-    text-align: center;
-    margin-top: 10px;
 }
 
 /* Survey Progress Bar Styles */
