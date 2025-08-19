@@ -120,14 +120,19 @@ def unified_answer_input(question_idx: int, question_text: str) -> str:
         # 기존 답변이 있다면 표시 (단, 다음 페이지로 넘어온 경우는 숨김)
         hide_flag = st.session_state.get(f"hide_current_answer_{question_idx}", False)
         if hide_flag:
-            # 플래그를 한 번 사용하면 삭제
             del st.session_state[f"hide_current_answer_{question_idx}"]
         elif current_answer and not current_answer.startswith("[Voice"):
             st.success(f"💭 현재 텍스트 답변:")
             st.info(current_answer)
         elif current_answer:
             st.success(f"✅ 음성 답변이 저장되어 있습니다")
-        
+
+        # 내 답변 오디오 항상 재생
+        audio_data_key = f"audio_data_{question_idx}"
+        audio_data = st.session_state.get(audio_data_key)
+        if audio_data:
+            st.audio(audio_data, format='audio/wav')
+
         # 오디오 입력 (streamlit 1.32+)
         audio_value = st.audio_input(
             "마이크 버튼을 눌러서 녹음을 시작/종료하세요",
@@ -138,8 +143,8 @@ def unified_answer_input(question_idx: int, question_text: str) -> str:
         # 새로운 녹음이 들어오면 플래그 초기화
         if audio_value is not None and not st.session_state.get(stt_flag_key):
             st.success("🎵 음성이 성공적으로 녹음되었습니다!")
+            st.session_state[audio_data_key] = audio_value.getvalue()
             st.audio(audio_value, format='audio/wav')
-            st.session_state[f"audio_data_{question_idx}"] = audio_value.getvalue()
             with st.spinner("🔄 음성을 텍스트로 변환 중..."):
                 transcript = voice_manager.speech_to_text(audio_value.getvalue())
             if transcript and not transcript.startswith("[Voice recording"):
@@ -149,7 +154,6 @@ def unified_answer_input(question_idx: int, question_text: str) -> str:
                 st.rerun()
             else:
                 st.error("⚠️ 음성 변환에 실패했습니다. 다시 녹음해보세요.")
-        # 사용자가 새로 녹음하면 플래그를 False로 초기화
         elif audio_value is None and st.session_state.get(stt_flag_key):
             st.session_state[stt_flag_key] = False
     with tab2:
