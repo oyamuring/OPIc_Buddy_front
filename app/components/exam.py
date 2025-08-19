@@ -199,20 +199,17 @@ def show_exam():
                 f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
                 unsafe_allow_html=True
             )
-        # 문제 듣기 버튼 (모바일 호환)
+        # 문제 진입 시 자동 TTS 변환 및 재생
         if 'tts_audio_cache' not in st.session_state:
             st.session_state['tts_audio_cache'] = {}
         tts_key = f"q{exam_idx}_tts"
-        if st.button("🔊 문제 듣기", key=f"tts_btn_{exam_idx}"):
+        audio_data = st.session_state['tts_audio_cache'].get(tts_key)
+        if audio_data is None:
+            # 캐시 없으면 자동 변환
             with st.spinner("문제 음성 변환 중..."):
                 voice_manager = VoiceManager()
                 audio_data = voice_manager.text_to_speech(current_question)
-                if audio_data:
-                    st.session_state['tts_audio_cache'][tts_key] = audio_data
-                else:
-                    st.session_state['tts_audio_cache'][tts_key] = None
-        # 버튼 클릭 후에만 오디오 재생
-        audio_data = st.session_state['tts_audio_cache'].get(tts_key)
+                st.session_state['tts_audio_cache'][tts_key] = audio_data
         if audio_data:
             try:
                 import base64
