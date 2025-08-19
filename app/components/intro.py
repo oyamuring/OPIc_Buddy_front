@@ -12,14 +12,47 @@ def show_intro():
     """인트로 화면을 표시합니다."""
     # 스타일 적용
     apply_intro_styles()
-
-    # 타이틀 + 설명
+    # 타이틀 + 설명 (반응형: 웹은 한 줄, 모바일은 줄바꿈)
     st.markdown("""
+    <style>
+    @media (max-width: 600px) {
+        .opic-header-responsive {
+            display: block;
+            line-height: 1.3;
+        }
+        .opic-header-responsive .opic-header-line2 {
+            display: block;
+        }
+        .intro-desc {
+            font-size: 1.05rem !important;
+            padding: 0 6vw !important;
+            word-break: break-word;
+            line-height: 1.35;
+        }
+    }
+    @media (min-width: 601px) {
+        .opic-header-responsive {
+            display: inline;
+        }
+        .opic-header-responsive .opic-header-line2 {
+            display: inline;
+        }
+        .intro-desc {
+            font-size: 1.25rem !important;
+            padding: 0;
+            word-break: keep-all;
+            line-height: 1.25;
+        }
+    }
+    </style>
     <div class="block-welcome" style='text-align: center;'>
-        <h2 class="opic-header">
-            <span class="opic-header-en-mobile opic-header-en">🔊 Oral Proficiency Interview<br>computer (OPIc)</span>
+        <h2 class="opic-header opic-header-responsive">
+          🔊 Oral Proficiency Interview
+          <span class="opic-header-line2">computer (OPIc)</span>
         </h2>
-        <p style="font-size:1.25rem; font-weight:bold;">지금부터 <span style='color:#f4621f; font-weight:bold;'>English 말하기 평가</span>를 시작하겠습니다.</p>
+        <p class="intro-desc">
+            지금부터 <span style='color:#f4621f; font-weight:bold;'>English 말하기 평가</span>를 시작하겠습니다.
+        </p>
     </div>
     """, unsafe_allow_html=True)
 
