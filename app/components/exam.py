@@ -215,7 +215,7 @@ def show_exam():
                 import base64
                 b64 = base64.b64encode(audio_data).decode()
                 audio_html = f'''
-                    <audio controls autoplay>
+                    <audio controls>
                         <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
                         <source src="data:audio/mpeg;base64,{b64}" type="audio/mpeg">
                         Your browser does not support the audio element.
