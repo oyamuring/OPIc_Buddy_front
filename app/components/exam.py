@@ -214,10 +214,11 @@ def show_exam():
                 st.session_state['tts_audio_cache'][tts_key] = audio_data
         if audio_data:
             try:
-                import base64
+                import base64, uuid
                 b64 = base64.b64encode(audio_data).decode()
+                audio_id = f"question-audio-{exam_idx}-{uuid.uuid4()}"
                 audio_html = f'''
-                    <audio controls>
+                    <audio id="{audio_id}" controls>
                         <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
                         <source src="data:audio/mpeg;base64,{b64}" type="audio/mpeg">
                         Your browser does not support the audio element.
