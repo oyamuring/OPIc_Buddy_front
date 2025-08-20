@@ -237,9 +237,10 @@ def show_exam():
     with col1:
         back_label = "← Survey" if exam_idx == 0 else "← Back"
         if st.button(back_label, key=f"back_btn_{exam_idx}"):
-            # 문제 이동 시 현재 문제 TTS만 남기고 나머지 삭제
             tts_key = f"q{max(exam_idx-1,0)}_tts"
-            st.session_state['tts_audio_cache'] = {tts_key: st.session_state['tts_audio_cache'].get(tts_key)} if tts_key in st.session_state['tts_audio_cache'] else {}
+            st.session_state['tts_audio_cache'] = {tts_key: st.session_state['tts_audio_cache'].get(tts_key)} if tts_key in st.session_state.get('tts_audio_cache', {}) else {}
+            if 'tts_audio_cache' not in st.session_state:
+                st.session_state['tts_audio_cache'] = {}
             if exam_idx == 0:
                 st.session_state.stage = "survey"
                 st.rerun()
@@ -250,7 +251,6 @@ def show_exam():
     with col2:
         if st.button("🧹 Clear Answer", key=f"clear_btn_{exam_idx}"):
             st.session_state[f"ans_{exam_idx}"] = ""
-            # text_input_x의 키를 변경하여 위젯을 새로 렌더링 (세션 상태 직접 할당 X)
             st.session_state[f"text_input_key_{exam_idx}"] = str(uuid.uuid4())
             st.session_state[f"audio_data_{exam_idx}"] = None
             st.session_state.user_input = ""
@@ -258,10 +258,11 @@ def show_exam():
             st.rerun()
     with col3:
         if st.button("→ Next", key=f"next_btn_{exam_idx}"):
-            # 문제 이동 시 다음 문제 TTS만 남기고 나머지 삭제
             next_idx = exam_idx + 1
             next_key = f"q{next_idx}_tts"
-            st.session_state['tts_audio_cache'] = {next_key: st.session_state['tts_audio_cache'].get(next_key)} if next_key in st.session_state['tts_audio_cache'] else {}
+            st.session_state['tts_audio_cache'] = {next_key: st.session_state['tts_audio_cache'].get(next_key)} if next_key in st.session_state.get('tts_audio_cache', {}) else {}
+            if 'tts_audio_cache' not in st.session_state:
+                st.session_state['tts_audio_cache'] = {}
             recorded_answer = answer.strip() if answer and answer.strip() else "무응답"
             st.session_state.exam_answers.append(recorded_answer)
             audio_key = f"audio_data_{exam_idx}"
@@ -271,7 +272,6 @@ def show_exam():
             st.session_state["answer_audio_files"].append(audio_data)
             st.session_state.user_input = ""
             st.session_state.exam_idx += 1
-            # 다음 문제 TTS 미리 변환
             questions = st.session_state["exam_questions"]
             if next_idx < len(questions):
                 if next_key not in st.session_state['tts_audio_cache']:
@@ -279,6 +279,10 @@ def show_exam():
                     next_audio = voice_manager.text_to_speech(questions[next_idx])
                     st.session_state['tts_audio_cache'][next_key] = next_audio
             st.rerun()
+
+    # 문제 오디오 캐시가 항상 존재하도록 보장
+    if 'tts_audio_cache' not in st.session_state:
+        st.session_state['tts_audio_cache'] = {}
 
 
 # ---- 이 모듈을 직접 실행했을 때의 가벼운 테스트 진입점 ----
