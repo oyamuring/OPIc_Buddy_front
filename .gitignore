@@ -1,3 +1,5 @@
+# Streamlit secrets (보안)
+.streamlit/secrets.toml
 # 디렉토리 무시
 model/
 
