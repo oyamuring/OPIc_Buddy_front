@@ -202,7 +202,9 @@ def show_exam():
         # 문제 진입 시 자동 TTS 변환 및 재생
         if 'tts_audio_cache' not in st.session_state:
             st.session_state['tts_audio_cache'] = {}
+        # exam_idx가 바뀌면 이전 캐시 삭제(현재 문제만 남김)
         tts_key = f"q{exam_idx}_tts"
+        st.session_state['tts_audio_cache'] = {k: v for k, v in st.session_state['tts_audio_cache'].items() if k == tts_key}
         audio_data = st.session_state['tts_audio_cache'].get(tts_key)
         if audio_data is None:
             # 캐시 없으면 자동 변환
