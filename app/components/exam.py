@@ -186,12 +186,13 @@ def show_exam():
     st.markdown(f"<div style='font-size:1.1rem; color:#666; margin-bottom:4px;'>진행도: {exam_idx + 1} / {len(questions)}</div>", unsafe_allow_html=True)
     st.progress((exam_idx + 1) / len(questions))
 
-    # 차차(GIF) 왼쪽, 문제 텍스트 토글+오디오 플레이어 오른쪽 (세로 배치)
+    # 차차(GIF) 왼쪽, 문제 텍스트 토글+오디오 안내 오른쪽 (세로 배치)
     st.markdown("<div style='height: 8px'></div>", unsafe_allow_html=True)
     chacha_gif_html = _gif_to_base64_html("app/chacha.gif", width=140)
     col_left, col_right = st.columns([1, 3])
     with col_left:
         st.markdown(chacha_gif_html, unsafe_allow_html=True)
+
     # 오디오 데이터 생성/캐싱은 col_right 밖에서 항상 exam_idx, current_question 기준으로 실행
     if 'tts_audio_cache' not in st.session_state:
         st.session_state['tts_audio_cache'] = {}
@@ -204,7 +205,27 @@ def show_exam():
             audio_data = voice_manager.text_to_speech(current_question)
             st.session_state['tts_audio_cache'][tts_key] = audio_data
 
-    # UI(오디오 플레이어)는 col_right 블록 안에서만 출력
+    # 오디오 플레이어는 col_right 밖(상단)에 항상 위치
+    if audio_data:
+        try:
+            import base64, uuid
+            b64 = base64.b64encode(audio_data).decode()
+            audio_id = f"question-audio-{exam_idx}-{uuid.uuid4()}"
+            audio_html = f'''
+                <div style="text-align:left; margin: 12px 0 0 0; padding: 12px 18px; background: #f8f9fa; border-radius: 10px; box-shadow: 0 1px 4px #0001; border: 1px solid #e3e6ea;">
+                    <b style="color:#1976d2;">문제 오디오</b><br>
+                    <audio id="{audio_id}" controls style="width:100%; margin-top:4px;">
+                        <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+                        <source src="data:audio/mpeg;base64,{b64}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            '''
+            st.markdown(audio_html, unsafe_allow_html=True)
+        except Exception as e:
+            st.error(f"audio 태그 예외: {e}")
+
+    # col_right 안에는 안내 메시지만 배치
     with col_right:
         show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{exam_idx}")
         if show_text:
@@ -212,23 +233,7 @@ def show_exam():
                 f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
                 unsafe_allow_html=True
             )
-        if audio_data:
-            try:
-                import base64, uuid
-                b64 = base64.b64encode(audio_data).decode()
-                audio_id = f"question-audio-{exam_idx}-{uuid.uuid4()}"
-                audio_html = f'''
-                    <div style="text-align:left; margin-top:8px;">
-                        <audio id="{audio_id}" controls>
-                            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-                            <source src="data:audio/mpeg;base64,{b64}" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
-                    </div>
-                '''
-                st.markdown(audio_html, unsafe_allow_html=True)
-            except Exception as e:
-                st.error(f"audio 태그 예외: {e}")
+        st.markdown("<div style='margin-top:10px; color:#888; font-size:0.97em;'>🔊 하단의 오디오 플레이어에서 문제 음성을 들을 수 있습니다.</div>", unsafe_allow_html=True)
 
    
 
@@ -240,8 +245,10 @@ def show_exam():
     with col1:
         back_label = "← Survey" if exam_idx == 0 else "← Back"
         if st.button(back_label, key=f"back_btn_{exam_idx}"):
-            # 문제 이동 시 오디오 캐시 완전 초기화
-            st.session_state['tts_audio_cache'] = {}
+            # 문제 이동 시 현재 문제의 오디오 캐시만 삭제
+            tts_key = f"q{exam_idx}_tts"
+            if 'tts_audio_cache' in st.session_state and tts_key in st.session_state['tts_audio_cache']:
+                del st.session_state['tts_audio_cache'][tts_key]
             if exam_idx == 0:
                 st.session_state.stage = "survey"
             else:
@@ -259,8 +266,10 @@ def show_exam():
             st.rerun()
     with col3:
         if st.button("→ Next", key=f"next_btn_{exam_idx}"):
-            # 문제 이동 시 오디오 캐시 완전 초기화
-            st.session_state['tts_audio_cache'] = {}
+            # 문제 이동 시 현재 문제의 오디오 캐시만 삭제
+            tts_key = f"q{exam_idx}_tts"
+            if 'tts_audio_cache' in st.session_state and tts_key in st.session_state['tts_audio_cache']:
+                del st.session_state['tts_audio_cache'][tts_key]
             recorded_answer = answer.strip() if answer and answer.strip() else "무응답"
             st.session_state.exam_answers.append(recorded_answer)
             audio_key = f"audio_data_{exam_idx}"
