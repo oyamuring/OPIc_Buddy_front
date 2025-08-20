@@ -163,6 +163,13 @@ def show_exam():
         with st.spinner("문제를 생성하는 중..."):
             qs = asyncio.run(get_final_questions_for_streamlit())
         st.session_state["exam_questions"] = qs
+        # 모든 문제 TTS 미리 변환/캐싱
+        st.session_state['tts_audio_cache'] = {}
+        voice_manager = VoiceManager()
+        for idx, q in enumerate(qs):
+            tts_key = f"q{idx}_tts"
+            audio_data = voice_manager.text_to_speech(q)
+            st.session_state['tts_audio_cache'][tts_key] = audio_data
 
     if "exam_answers" not in st.session_state or not isinstance(st.session_state["exam_answers"], list):
         st.session_state["exam_answers"] = []
@@ -199,19 +206,9 @@ def show_exam():
                 f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
                 unsafe_allow_html=True
             )
-        # 문제 진입 시 자동 TTS 변환(controls만, 자동재생X)
-        if 'tts_audio_cache' not in st.session_state:
-            st.session_state['tts_audio_cache'] = {}
-
+        # 문제 오디오는 캐시만 사용
         tts_key = f"q{exam_idx}_tts"
-        # 현재 문제 오디오 없으면 변환
-        if tts_key not in st.session_state['tts_audio_cache']:
-            with st.spinner("문제 음성 변환 중..."):
-                voice_manager = VoiceManager()
-                audio_data = voice_manager.text_to_speech(current_question)
-                st.session_state['tts_audio_cache'][tts_key] = audio_data
-        else:
-            audio_data = st.session_state['tts_audio_cache'][tts_key]
+        audio_data = st.session_state['tts_audio_cache'].get(tts_key)
 
         if audio_data:
             try:
@@ -240,8 +237,9 @@ def show_exam():
     with col1:
         back_label = "← Survey" if exam_idx == 0 else "← Back"
         if st.button(back_label, key=f"back_btn_{exam_idx}"):
-            # 문제 이동 시 오디오 캐시 완전 초기화
-            st.session_state['tts_audio_cache'] = {}
+            # 문제 이동 시 현재 문제 TTS만 남기고 나머지 삭제
+            tts_key = f"q{max(exam_idx-1,0)}_tts"
+            st.session_state['tts_audio_cache'] = {tts_key: st.session_state['tts_audio_cache'].get(tts_key)} if tts_key in st.session_state['tts_audio_cache'] else {}
             if exam_idx == 0:
                 st.session_state.stage = "survey"
                 st.rerun()
@@ -260,8 +258,10 @@ def show_exam():
             st.rerun()
     with col3:
         if st.button("→ Next", key=f"next_btn_{exam_idx}"):
-            # 문제 이동 시 오디오 캐시 완전 초기화
-            st.session_state['tts_audio_cache'] = {}
+            # 문제 이동 시 다음 문제 TTS만 남기고 나머지 삭제
+            next_idx = exam_idx + 1
+            next_key = f"q{next_idx}_tts"
+            st.session_state['tts_audio_cache'] = {next_key: st.session_state['tts_audio_cache'].get(next_key)} if next_key in st.session_state['tts_audio_cache'] else {}
             recorded_answer = answer.strip() if answer and answer.strip() else "무응답"
             st.session_state.exam_answers.append(recorded_answer)
             audio_key = f"audio_data_{exam_idx}"
@@ -272,10 +272,8 @@ def show_exam():
             st.session_state.user_input = ""
             st.session_state.exam_idx += 1
             # 다음 문제 TTS 미리 변환
-            next_idx = st.session_state.exam_idx
             questions = st.session_state["exam_questions"]
             if next_idx < len(questions):
-                next_key = f"q{next_idx}_tts"
                 if next_key not in st.session_state['tts_audio_cache']:
                     voice_manager = VoiceManager()
                     next_audio = voice_manager.text_to_speech(questions[next_idx])
