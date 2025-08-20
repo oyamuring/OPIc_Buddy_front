@@ -199,35 +199,37 @@ def show_exam():
                 f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
                 unsafe_allow_html=True
             )
-        # 문제 진입 시 자동 TTS 변환 및 재생
+
+        # 토글 바로 아래, 왼쪽 정렬로 오디오 플레이어 출력 (토글 안 X)
         if 'tts_audio_cache' not in st.session_state:
             st.session_state['tts_audio_cache'] = {}
-
         tts_key = f"q{exam_idx}_tts"
-        # 문제 인덱스가 바뀌면 항상 새로 TTS 생성 (캐시 사용 안함)
-        with st.spinner("문제 음성 변환 중..."):
-            voice_manager = VoiceManager()
-            audio_data = voice_manager.text_to_speech(current_question)
-            st.session_state['tts_audio_cache'][tts_key] = audio_data
-
+        audio_data = st.session_state['tts_audio_cache'].get(tts_key)
+        if audio_data is None:
+            import uuid
+            with st.spinner("문제 음성 변환 중..."):
+                voice_manager = VoiceManager()
+                audio_data = voice_manager.text_to_speech(current_question)
+                st.session_state['tts_audio_cache'][tts_key] = audio_data
         if audio_data:
             try:
                 import base64, uuid
                 b64 = base64.b64encode(audio_data).decode()
                 audio_id = f"question-audio-{exam_idx}-{uuid.uuid4()}"
                 audio_html = f'''
-                    <audio id="{audio_id}" controls autop                    /Users/ohseohyeon/OPIc_Buddy_front/.streamlit/secrets.toml                    /Users/ohseohyeon/OPIc_Buddy_front/.streamlit/secrets.tomllay>
-                        <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-                        <source src="data:audio/mpeg;base64,{b64}" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
+                    <div style="text-align:left; margin-top:8px;">
+                        <audio id="{audio_id}" controls>
+                            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+                            <source src="data:audio/mpeg;base64,{b64}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
                 '''
                 st.markdown(audio_html, unsafe_allow_html=True)
             except Exception as e:
                 st.error(f"audio 태그 예외: {e}")
-        elif audio_data is not None:
-            st.error("TTS 변환 오류: 음성 생성에 실패했습니다. 네트워크 또는 API Key를 확인하세요.")
-    # 피드백 메시지 제거 (불필요)
+
+   
 
     # 답변 입력(음성+텍스트 통합)
     answer = unified_answer_input(exam_idx, current_question)
@@ -241,18 +243,10 @@ def show_exam():
             st.session_state['tts_audio_cache'] = {}
             if exam_idx == 0:
                 st.session_state.stage = "survey"
-                st.rerun()
             else:
                 st.session_state.exam_idx -= 1
-            st.write("audio_data type:", type(audio_data), "length:", len(audio_data) if audio_data else None)
-            if audio_data:
-                # mp3 파일로 저장 (진단용)
-                with open("test_output.mp3", "wb") as f:
-                    f.write(audio_data)
-                st.audio(audio_data, format="audio/mp3")
-            else:
-                st.error("TTS에서 오디오 데이터가 생성되지 않았습니다.")
-    import uuid
+            st.rerun()
+            return
     with col2:
         if st.button("🧹 Clear Answer", key=f"clear_btn_{exam_idx}"):
             st.session_state[f"ans_{exam_idx}"] = ""
@@ -269,13 +263,15 @@ def show_exam():
             recorded_answer = answer.strip() if answer and answer.strip() else "무응답"
             st.session_state.exam_answers.append(recorded_answer)
             audio_key = f"audio_data_{exam_idx}"
-            audio_data = st.session_state.get(audio_key)
+            answer_audio_data = st.session_state.get(audio_key)
             if "answer_audio_files" not in st.session_state:
                 st.session_state["answer_audio_files"] = []
-            st.session_state["answer_audio_files"].append(audio_data)
+            st.session_state["answer_audio_files"].append(answer_audio_data)
             st.session_state.user_input = ""
             st.session_state.exam_idx += 1
+            # 다음 문제 진입 시 TTS 변환을 위해 캐시를 비우고 rerun
             st.rerun()
+            return
 
 
 # ---- 이 모듈을 직접 실행했을 때의 가벼운 테스트 진입점 ----
