@@ -124,7 +124,7 @@ async def make_questions(topic: str, category: str, level: str, count: int) -> L
     Args:
         topic: The topic chosen for the questions.
         category: The category of the questions ('survey', 'role_play', 'random_question').
-        level: The user's proficiency level (e.g., 'beginner', 'intermediate', 'advanced').
+        level: (ignored, kept for compatibility)
         count: The total number of questions to generate.
 
     Returns:
@@ -143,13 +143,12 @@ async def make_questions(topic: str, category: str, level: str, count: int) -> L
     # 2. Determine how many more questions are needed
     questions_needed = max(0, count - len(db_questions))
 
-    # 3. Generate additional questions if needed
+    # 3. Generate additional questions if needed (level은 프롬프트에 반영하지 않음)
     openai_questions = []
     if questions_needed > 0:
         prompt = (
             f"Generate {questions_needed} additional OPIC-style questions about the topic '{topic}' "
             f"in the category '{category}'. "
-            f"The questions should be appropriate for a speaker at an {level} level. "
             f"Make sure they are open-ended and require detailed answers."
         )
         openai_questions = generate_openai_questions(prompt, questions_needed)
