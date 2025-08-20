@@ -202,12 +202,13 @@ def show_exam():
         # 문제 진입 시 자동 TTS 변환 및 재생
         if 'tts_audio_cache' not in st.session_state:
             st.session_state['tts_audio_cache'] = {}
-        # exam_idx가 바뀌면 이전 캐시 삭제(현재 문제만 남김)
+        # 문제 인덱스가 바뀌면 캐시를 완전히 비움(문제 이동 시에도 Back/Next에서 비움)
         tts_key = f"q{exam_idx}_tts"
-        st.session_state['tts_audio_cache'] = {k: v for k, v in st.session_state['tts_audio_cache'].items() if k == tts_key}
-        audio_data = st.session_state['tts_audio_cache'].get(tts_key)
+        audio_data = st.session_state['tts_audio_cache'].get(tts_key) if 'tts_audio_cache' in st.session_state else None
         if audio_data is None:
             # 캐시 없으면 자동 변환
+            if 'tts_audio_cache' not in st.session_state:
+                st.session_state['tts_audio_cache'] = {}
             with st.spinner("문제 음성 변환 중..."):
                 voice_manager = VoiceManager()
                 audio_data = voice_manager.text_to_speech(current_question)
@@ -240,8 +241,7 @@ def show_exam():
         back_label = "← Survey" if exam_idx == 0 else "← Back"
         if st.button(back_label, key=f"back_btn_{exam_idx}"):
             # 문제 이동 시 오디오 캐시 완전 초기화
-            if 'tts_audio_cache' in st.session_state:
-                st.session_state['tts_audio_cache'] = {}
+            st.session_state['tts_audio_cache'] = {}
             if exam_idx == 0:
                 st.session_state.stage = "survey"
                 st.rerun()
@@ -261,8 +261,7 @@ def show_exam():
     with col3:
         if st.button("→ Next", key=f"next_btn_{exam_idx}"):
             # 문제 이동 시 오디오 캐시 완전 초기화
-            if 'tts_audio_cache' in st.session_state:
-                st.session_state['tts_audio_cache'] = {}
+            st.session_state['tts_audio_cache'] = {}
             recorded_answer = answer.strip() if answer and answer.strip() else "무응답"
             st.session_state.exam_answers.append(recorded_answer)
             audio_key = f"audio_data_{exam_idx}"
