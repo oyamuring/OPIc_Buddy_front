@@ -199,16 +199,19 @@ def show_exam():
                 f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
                 unsafe_allow_html=True
             )
-        # 문제 진입 시 자동 TTS 변환 및 재생
+        # 문제 진입 시 자동 TTS 변환(controls만, 자동재생X)
         if 'tts_audio_cache' not in st.session_state:
             st.session_state['tts_audio_cache'] = {}
 
         tts_key = f"q{exam_idx}_tts"
-        # 문제 인덱스가 바뀌면 항상 새로 TTS 생성 (캐시 사용 안함)
-        with st.spinner("문제 음성 변환 중..."):
-            voice_manager = VoiceManager()
-            audio_data = voice_manager.text_to_speech(current_question)
-            st.session_state['tts_audio_cache'][tts_key] = audio_data
+        # 현재 문제 오디오 없으면 변환
+        if tts_key not in st.session_state['tts_audio_cache']:
+            with st.spinner("문제 음성 변환 중..."):
+                voice_manager = VoiceManager()
+                audio_data = voice_manager.text_to_speech(current_question)
+                st.session_state['tts_audio_cache'][tts_key] = audio_data
+        else:
+            audio_data = st.session_state['tts_audio_cache'][tts_key]
 
         if audio_data:
             try:
@@ -216,7 +219,7 @@ def show_exam():
                 b64 = base64.b64encode(audio_data).decode()
                 audio_id = f"question-audio-{exam_idx}-{uuid.uuid4()}"
                 audio_html = f'''
-                    <audio id="{audio_id}" controls autoplay>
+                    <audio id="{audio_id}" controls>
                         <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
                         <source src="data:audio/mpeg;base64,{b64}" type="audio/mpeg">
                         Your browser does not support the audio element.
@@ -268,6 +271,15 @@ def show_exam():
             st.session_state["answer_audio_files"].append(audio_data)
             st.session_state.user_input = ""
             st.session_state.exam_idx += 1
+            # 다음 문제 TTS 미리 변환
+            next_idx = st.session_state.exam_idx
+            questions = st.session_state["exam_questions"]
+            if next_idx < len(questions):
+                next_key = f"q{next_idx}_tts"
+                if next_key not in st.session_state['tts_audio_cache']:
+                    voice_manager = VoiceManager()
+                    next_audio = voice_manager.text_to_speech(questions[next_idx])
+                    st.session_state['tts_audio_cache'][next_key] = next_audio
             st.rerun()
 
 
