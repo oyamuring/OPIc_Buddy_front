@@ -192,6 +192,19 @@ def show_exam():
     col_left, col_right = st.columns([1, 3])
     with col_left:
         st.markdown(chacha_gif_html, unsafe_allow_html=True)
+    # 오디오 데이터 생성/캐싱은 col_right 밖에서 항상 exam_idx, current_question 기준으로 실행
+    if 'tts_audio_cache' not in st.session_state:
+        st.session_state['tts_audio_cache'] = {}
+    tts_key = f"q{exam_idx}_tts"
+    audio_data = st.session_state['tts_audio_cache'].get(tts_key)
+    if audio_data is None:
+        import uuid
+        with st.spinner("문제 음성 변환 중..."):
+            voice_manager = VoiceManager()
+            audio_data = voice_manager.text_to_speech(current_question)
+            st.session_state['tts_audio_cache'][tts_key] = audio_data
+
+    # UI(오디오 플레이어)는 col_right 블록 안에서만 출력
     with col_right:
         show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{exam_idx}")
         if show_text:
@@ -199,18 +212,6 @@ def show_exam():
                 f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
                 unsafe_allow_html=True
             )
-
-        # 토글 바로 아래, 왼쪽 정렬로 오디오 플레이어 출력 (토글 안 X)
-        if 'tts_audio_cache' not in st.session_state:
-            st.session_state['tts_audio_cache'] = {}
-        tts_key = f"q{exam_idx}_tts"
-        audio_data = st.session_state['tts_audio_cache'].get(tts_key)
-        if audio_data is None:
-            import uuid
-            with st.spinner("문제 음성 변환 중..."):
-                voice_manager = VoiceManager()
-                audio_data = voice_manager.text_to_speech(current_question)
-                st.session_state['tts_audio_cache'][tts_key] = audio_data
         if audio_data:
             try:
                 import base64, uuid
@@ -269,7 +270,6 @@ def show_exam():
             st.session_state["answer_audio_files"].append(answer_audio_data)
             st.session_state.user_input = ""
             st.session_state.exam_idx += 1
-            # 다음 문제 진입 시 TTS 변환을 위해 캐시를 비우고 rerun
             st.rerun()
             return
 
