@@ -202,24 +202,21 @@ def show_exam():
         # 문제 진입 시 자동 TTS 변환 및 재생
         if 'tts_audio_cache' not in st.session_state:
             st.session_state['tts_audio_cache'] = {}
-        # 문제 인덱스가 바뀌면 캐시를 완전히 비움(문제 이동 시에도 Back/Next에서 비움)
+
         tts_key = f"q{exam_idx}_tts"
-        audio_data = st.session_state['tts_audio_cache'].get(tts_key) if 'tts_audio_cache' in st.session_state else None
-        if audio_data is None:
-            # 캐시 없으면 자동 변환
-            if 'tts_audio_cache' not in st.session_state:
-                st.session_state['tts_audio_cache'] = {}
-            with st.spinner("문제 음성 변환 중..."):
-                voice_manager = VoiceManager()
-                audio_data = voice_manager.text_to_speech(current_question)
-                st.session_state['tts_audio_cache'][tts_key] = audio_data
+        # 문제 인덱스가 바뀌면 항상 새로 TTS 생성 (캐시 사용 안함)
+        with st.spinner("문제 음성 변환 중..."):
+            voice_manager = VoiceManager()
+            audio_data = voice_manager.text_to_speech(current_question)
+            st.session_state['tts_audio_cache'][tts_key] = audio_data
+
         if audio_data:
             try:
                 import base64, uuid
                 b64 = base64.b64encode(audio_data).decode()
                 audio_id = f"question-audio-{exam_idx}-{uuid.uuid4()}"
                 audio_html = f'''
-                    <audio id="{audio_id}" controls>
+                    <audio id="{audio_id}" controls autoplay>
                         <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
                         <source src="data:audio/mpeg;base64,{b64}" type="audio/mpeg">
                         Your browser does not support the audio element.
