@@ -238,12 +238,13 @@ def show_exam():
     with col1:
         back_label = "← Survey" if exam_idx == 0 else "← Back"
         if st.button(back_label, key=f"back_btn_{exam_idx}"):
+            # 문제 이동 시 오디오 캐시 완전 초기화
+            if 'tts_audio_cache' in st.session_state:
+                st.session_state['tts_audio_cache'] = {}
             if exam_idx == 0:
-                # 첫 문제에서 survey로 이동
                 st.session_state.stage = "survey"
                 st.rerun()
             else:
-                # 이전 문제로 이동
                 st.session_state.exam_idx -= 1
                 st.rerun()
     import uuid
@@ -258,10 +259,11 @@ def show_exam():
             st.rerun()
     with col3:
         if st.button("→ Next", key=f"next_btn_{exam_idx}"):
-            # 답변이 있으면 그대로, 없으면 '무응답'으로 기록
+            # 문제 이동 시 오디오 캐시 완전 초기화
+            if 'tts_audio_cache' in st.session_state:
+                st.session_state['tts_audio_cache'] = {}
             recorded_answer = answer.strip() if answer and answer.strip() else "무응답"
             st.session_state.exam_answers.append(recorded_answer)
-            # 오디오 파일도 함께 저장 (없으면 None)
             audio_key = f"audio_data_{exam_idx}"
             audio_data = st.session_state.get(audio_key)
             if "answer_audio_files" not in st.session_state:
