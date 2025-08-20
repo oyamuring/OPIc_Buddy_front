@@ -207,6 +207,8 @@ def show_exam():
                 unsafe_allow_html=True
             )
         # 문제 오디오는 캐시만 사용
+        if 'tts_audio_cache' not in st.session_state:
+            st.session_state['tts_audio_cache'] = {}
         tts_key = f"q{exam_idx}_tts"
         audio_data = st.session_state['tts_audio_cache'].get(tts_key)
 
