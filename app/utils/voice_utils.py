@@ -15,16 +15,37 @@ import streamlit as st
 ## from gtts import gTTS  # 제거
 from openai import OpenAI
 
+
+import re
+
+def clean_text_for_tts(text: str) -> str:
+    """
+    TTS 전달 전 모든 dash 계열, smart quote, 기타 비ASCII 문자 제거/치환
+    영어, 숫자, 기본 기호(.,!?\'"-:;()[] 등)만 남김
+    """
+    # dash 계열 모두 일반 하이픈(-)으로 치환
+    dash_pattern = r"[\u2012\u2013\u2014\u2015\u2212\u2010\u2011]"
+    text = re.sub(dash_pattern, "-", text)
+    # smart quote 계열 치환
+    text = text.replace("“", '"').replace("”", '"').replace("‘", "'").replace("’", "'")
+    # 기타 비ASCII 문자 제거 (영어, 숫자, 기본 기호만 허용)
+    text = re.sub(r"[^A-Za-z0-9 .,!?'\"\-:;()\[\]{}@#$%^&*_+=/\\|<>~`]+", " ", text)
+    # 연속 공백 정리
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
 class VoiceManager:
     def text_to_speech(self, text: str, lang: str = 'en') -> bytes:
-        """OpenAI TTS API를 사용해 텍스트를 mp3 음성으로 변환"""
+        """OpenAI TTS API를 사용해 텍스트를 mp3 음성으로 변환 (안전 정제 적용)"""
         if not self.openai_client:
             st.warning("OpenAI API 키가 설정되지 않아 TTS를 사용할 수 없습니다.")
             return None
+        safe_text = clean_text_for_tts(text)
         try:
             response = self.openai_client.audio.speech.create(
                 model="tts-1",  # 또는 "tts-1-hd"
-                input=text,
+                input=safe_text,
                 voice="alloy",  # "alloy", "echo", "fable", "onyx", "nova", "shimmer" 중 선택 가능
                 response_format="mp3"
             )
