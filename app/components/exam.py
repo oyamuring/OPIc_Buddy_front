@@ -180,11 +180,26 @@ def show_exam():
 
 
     # 상단 진행 상태
-    st.title("🗣️ OPIc Buddy TEST")
     st.markdown(f"<div style='font-size:1.1rem; color:#666; margin-bottom:4px;'>진행도: {exam_idx + 1} / {len(questions)}</div>", unsafe_allow_html=True)
     st.progress((exam_idx + 1) / len(questions))
 
-    # 오디오 플레이어 상단 고정 (문제별 캐싱)
+    # 본문: 좌측 캐릭터, 우측 토글+안내
+    chacha_gif_html = _gif_to_base64_html("app/chacha.gif", width=90)
+    col_left, col_right = st.columns([1, 2.5])
+    with col_left:
+        st.markdown(chacha_gif_html, unsafe_allow_html=True)
+    with col_right:
+        show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{exam_idx}")
+        st.markdown('<span style="color:#888; font-size:0.98rem;">🔊 하단의 오디오 플레이어에서 문제 음성을 들을 수 있습니다.</span>', unsafe_allow_html=True)
+
+    # 문제 텍스트 토글 시 표시
+    if show_text:
+        st.markdown(
+            f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
+            unsafe_allow_html=True
+        )
+
+    # 하단 카드 스타일 오디오 플레이어
     audio_cache_key = f"tts_audio_cache_{exam_idx}"
     if audio_cache_key not in st.session_state:
         voice_manager = VoiceManager()
@@ -192,23 +207,13 @@ def show_exam():
         st.session_state[audio_cache_key] = audio_data
     else:
         audio_data = st.session_state[audio_cache_key]
-    st.markdown("<div style='height: 8px'></div>", unsafe_allow_html=True)
+    st.markdown("""
+        <div style='background:#fafbfc; border-radius:10px; border:1px solid #e5e7eb; padding:18px 18px 10px 18px; margin-top:18px; margin-bottom:10px;'>
+            <div style='font-size:1.04rem; font-weight:700; color:#1976d2; margin-bottom:7px;'>문제 오디오</div>
+    """, unsafe_allow_html=True)
     if audio_data:
         st.audio(audio_data, format='audio/mp3')
-    st.info("🔊 문제 오디오가 재생되지 않으면 새로고침하거나, 네트워크 상태를 확인해 주세요.")
-
-    # 차차(GIF) 왼쪽, 문제 텍스트 토글만 오른쪽
-    chacha_gif_html = _gif_to_base64_html("app/chacha.gif", width=140)
-    col_left, col_right = st.columns([1, 3])
-    with col_left:
-        st.markdown(chacha_gif_html, unsafe_allow_html=True)
-    with col_right:
-        show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{exam_idx}")
-        if show_text:
-            st.markdown(
-                f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
-                unsafe_allow_html=True
-            )
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # 답변 입력(음성+텍스트 통합)
     answer = unified_answer_input(exam_idx, current_question)
