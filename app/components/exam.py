@@ -183,37 +183,51 @@ def show_exam():
     st.markdown(f"<div style='font-size:1.1rem; color:#666; margin-bottom:4px;'>진행도: {exam_idx + 1} / {len(questions)}</div>", unsafe_allow_html=True)
     st.progress((exam_idx + 1) / len(questions))
 
-    # 본문: 좌측 캐릭터, 우측 토글+안내
-    chacha_gif_html = _gif_to_base64_html("app/chacha.gif", width=90)
-    col_left, col_right = st.columns([1, 2.5])
+    st.markdown("<div style='height: 8px'></div>", unsafe_allow_html=True)
+    chacha_gif_html = _gif_to_base64_html("app/chacha.gif", width=140)
+    col_left, col_right = st.columns([1, 3])
     with col_left:
         st.markdown(chacha_gif_html, unsafe_allow_html=True)
-    with col_right:
-        show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{exam_idx}")
-        st.markdown('<span style="color:#888; font-size:0.98rem;">🔊 하단의 오디오 플레이어에서 문제 음성을 들을 수 있습니다.</span>', unsafe_allow_html=True)
 
-    # 문제 텍스트 토글 시 표시
-    if show_text:
-        st.markdown(
-            f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
-            unsafe_allow_html=True
-        )
-
-    # 하단 카드 스타일 오디오 플레이어
-    audio_cache_key = f"tts_audio_cache_{exam_idx}"
-    if audio_cache_key not in st.session_state:
+    # 오디오 데이터 생성/캐싱 (exam_idx, current_question 기준)
+    if 'tts_audio_cache' not in st.session_state:
+        st.session_state['tts_audio_cache'] = {}
+    tts_key = f"q_{exam_idx}_{hash(current_question)}"
+    audio_data = st.session_state['tts_audio_cache'].get(tts_key)
+    if audio_data is None:
         voice_manager = VoiceManager()
         audio_data = voice_manager.text_to_speech(current_question)
-        st.session_state[audio_cache_key] = audio_data
-    else:
-        audio_data = st.session_state[audio_cache_key]
-    st.markdown("""
-        <div style='background:#fafbfc; border-radius:10px; border:1px solid #e5e7eb; padding:18px 18px 10px 18px; margin-top:18px; margin-bottom:10px;'>
-            <div style='font-size:1.04rem; font-weight:700; color:#1976d2; margin-bottom:7px;'>문제 오디오</div>
-    """, unsafe_allow_html=True)
+        st.session_state['tts_audio_cache'][tts_key] = audio_data
+
+    # 오디오 플레이어는 col_right 밖(상단)에 항상 위치
     if audio_data:
-        st.audio(audio_data, format='audio/mp3')
-    st.markdown("</div>", unsafe_allow_html=True)
+        try:
+            import base64, uuid
+            b64 = base64.b64encode(audio_data).decode()
+            audio_id = f"question-audio-{exam_idx}-{uuid.uuid4()}"
+            audio_html = f'''
+                <div style="text-align:left; margin: 12px 0 0 0; padding: 12px 18px; background: #f8f9fa; border-radius: 10px; box-shadow: 0 1px 4px #0001; border: 1px solid #e3e6ea;">
+                    <b style="color:#1976d2;">문제 오디오</b><br>
+                    <audio id="{audio_id}" controls style="width:100%; margin-top:4px;">
+                        <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+                        <source src="data:audio/mpeg;base64,{b64}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            '''
+            st.markdown(audio_html, unsafe_allow_html=True)
+        except Exception as e:
+            st.error(f"audio 태그 예외: {e}")
+
+    # col_right 안에는 안내 메시지만 배치
+    with col_right:
+        show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{exam_idx}")
+        if show_text:
+            st.markdown(
+                f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
+                unsafe_allow_html=True
+            )
+        st.markdown("<div style='margin-top:10px; color:#888; font-size:0.97em;'>🔊 하단의 오디오 플레이어에서 문제 음성을 들을 수 있습니다.</div>", unsafe_allow_html=True)
 
     # 답변 입력(음성+텍스트 통합)
     answer = unified_answer_input(exam_idx, current_question)
