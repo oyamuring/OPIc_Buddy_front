@@ -178,14 +178,26 @@ def show_exam():
 
     current_question = questions[exam_idx]
 
+
     # 상단 진행 상태
     st.title("🗣️ OPIc Buddy TEST")
-    # 진행도 텍스트
     st.markdown(f"<div style='font-size:1.1rem; color:#666; margin-bottom:4px;'>진행도: {exam_idx + 1} / {len(questions)}</div>", unsafe_allow_html=True)
     st.progress((exam_idx + 1) / len(questions))
 
-    # 차차(GIF) 왼쪽, 문제 텍스트 토글+오디오 플레이어 오른쪽 (세로 배치)
+    # 오디오 플레이어 상단 고정 (문제별 캐싱)
+    audio_cache_key = f"tts_audio_cache_{exam_idx}"
+    if audio_cache_key not in st.session_state:
+        voice_manager = VoiceManager()
+        audio_data = voice_manager.text_to_speech(current_question)
+        st.session_state[audio_cache_key] = audio_data
+    else:
+        audio_data = st.session_state[audio_cache_key]
     st.markdown("<div style='height: 8px'></div>", unsafe_allow_html=True)
+    if audio_data:
+        st.audio(audio_data, format='audio/mp3')
+    st.info("🔊 문제 오디오가 재생되지 않으면 새로고침하거나, 네트워크 상태를 확인해 주세요.")
+
+    # 차차(GIF) 왼쪽, 문제 텍스트 토글만 오른쪽
     chacha_gif_html = _gif_to_base64_html("app/chacha.gif", width=140)
     col_left, col_right = st.columns([1, 3])
     with col_left:
@@ -197,13 +209,6 @@ def show_exam():
                 f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
                 unsafe_allow_html=True
             )
-        # 오디오 플레이어는 항상 표시
-        voice_manager = VoiceManager()
-        # 자동재생용 play_question_audio는 제거, 오디오 데이터만 생성해서 플레이어 한 번만 표시
-        audio_data = voice_manager.text_to_speech(current_question)
-        if audio_data:
-            st.audio(audio_data, format='audio/mp3')
-    # 피드백 메시지 제거 (불필요)
 
     # 답변 입력(음성+텍스트 통합)
     answer = unified_answer_input(exam_idx, current_question)
