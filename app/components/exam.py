@@ -178,28 +178,18 @@ def show_exam():
 
     current_question = questions[exam_idx]
 
-
     # 상단 진행 상태
+    st.title("🗣️ OPIc Buddy TEST")
+    # 진행도 텍스트
     st.markdown(f"<div style='font-size:1.1rem; color:#666; margin-bottom:4px;'>진행도: {exam_idx + 1} / {len(questions)}</div>", unsafe_allow_html=True)
     st.progress((exam_idx + 1) / len(questions))
 
+    # 차차(GIF) 왼쪽, 문제 텍스트 토글+오디오 플레이어 오른쪽 (세로 배치)
     st.markdown("<div style='height: 8px'></div>", unsafe_allow_html=True)
     chacha_gif_html = _gif_to_base64_html("app/chacha.gif", width=140)
     col_left, col_right = st.columns([1, 3])
     with col_left:
         st.markdown(chacha_gif_html, unsafe_allow_html=True)
-
-    # 오디오 데이터 생성/캐싱 (exam_idx, current_question 기준)
-    if 'tts_audio_cache' not in st.session_state:
-        st.session_state['tts_audio_cache'] = {}
-    tts_key = f"q_{exam_idx}_{hash(current_question)}"
-    audio_data = st.session_state['tts_audio_cache'].get(tts_key)
-    if audio_data is None:
-        voice_manager = VoiceManager()
-        audio_data = voice_manager.text_to_speech(current_question)
-        st.session_state['tts_audio_cache'][tts_key] = audio_data
-
-    # col_right 안에 안내, 토글, 오디오 카드 모두 배치
     with col_right:
         show_text = st.toggle("📝 문제 텍스트 보기", value=False, key=f"show_text_{exam_idx}")
         if show_text:
@@ -207,25 +197,13 @@ def show_exam():
                 f"<div style='font-size:1.1rem; font-weight:600; color:#222; margin-bottom:6px;'>{current_question}</div>",
                 unsafe_allow_html=True
             )
-        st.markdown("<div style='margin-top:10px; color:#888; font-size:0.97em;'>🔊 하단의 오디오 플레이어에서 문제 음성을 들을 수 있습니다.</div>", unsafe_allow_html=True)
+        # 오디오 플레이어는 항상 표시
+        voice_manager = VoiceManager()
+        # 자동재생용 play_question_audio는 제거, 오디오 데이터만 생성해서 플레이어 한 번만 표시
+        audio_data = voice_manager.text_to_speech(current_question)
         if audio_data:
-            try:
-                import base64, uuid
-                b64 = base64.b64encode(audio_data).decode()
-                audio_id = f"question-audio-{exam_idx}-{uuid.uuid4()}"
-                audio_html = f'''
-                    <div style="text-align:left; margin: 16px 0 0 0; padding: 14px 16px 10px 16px; background: #fff; border-radius: 10px; border: 1px solid #e5e7eb; box-shadow: none;">
-                        <span style="color:#1976d2; font-weight:700; font-size:1.04rem; text-decoration:underline; cursor:pointer;">문제 오디오</span><br>
-                        <audio id="{audio_id}" controls style="width:100%; margin-top:7px; margin-bottom:2px;">
-                            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-                            <source src="data:audio/mpeg;base64,{b64}" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
-                    </div>
-                '''
-                st.markdown(audio_html, unsafe_allow_html=True)
-            except Exception as e:
-                st.error(f"audio 태그 예외: {e}")
+            st.audio(audio_data, format='audio/mp3')
+    # 피드백 메시지 제거 (불필요)
 
     # 답변 입력(음성+텍스트 통합)
     answer = unified_answer_input(exam_idx, current_question)
